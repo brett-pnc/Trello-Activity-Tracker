@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Tracker Power-Up</title>
+    <script src="https://p.trellocdn.com/power-up.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f4f5f7;
+            color: #172b4d;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 24px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #dfe1e6;
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #172b4d;
+            margin: 0;
+        }
+        
+        .filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr 2fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dfe1e6;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-label {
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #5e6c84;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        
+        select, input {
+            padding: 8px 12px;
+            border: 2px solid #dfe1e6;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+            transition: border-color 0.2s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #0079bf;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: #0079bf;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            align-self: end;
+        }
+        
+        .btn:hover {
+            background: #005a8b;
+        }
+        
+        .btn:disabled {
+            background: #dfe1e6;
+            cursor: not-allowed;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #0079bf, #005a8b);
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        .activities {
+            margin-top: 24px;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            margin-bottom: 12px;
+            background: white;
+            border: 1px solid #dfe1e6;
+            border-radius: 8px;
+            transition: box-shadow 0.2s;
+        }
+        
+        .activity-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .activity-content {
+            flex-grow: 1;
+        }
+        
+        .activity-text {
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 0 0 4px 0;
+        }
+        
+        .activity-meta {
+            font-size: 12px;
+            color: #5e6c84;
+            display: flex;
+            gap: 16px;
+        }
+        
+        .activity-board {
+            font-weight: 500;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #5e6c84;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #5e6c84;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .type-card { background: #61bd4f; }
+        .type-comment { background: #f2d600; }
+        .type-attachment { background: #ff9f1a; }
+        .type-checklist { background: #c377e0; }
+        .type-member { background: #0079bf; }
+        .type-label { background: #eb5a46; }
+        .type-other { background: #838c91; }
+        
+        @media (max-width: 768px) {
+            .filters {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">📊 Activity Tracker</h1>
+        </div>
+        
+        <div class="filters">
+            <div class="filter-group">
+                <label class="filter-label">Start Date</label>
+                <input type="date" id="startDate" />
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">End Date</label>
+                <input type="date" id="endDate" />
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Board Filter</label>
+                <select id="boardFilter">
+                    <option value="">All Boards</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label"></label>
+                <button class="btn" id="loadActivities">Load Activities</button>
+            </div>
+        </div>
+        
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-card">
+                <span class="stat-number" id="totalActivities">0</span>
+                <span class="stat-label">Total Activities</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="cardActivities">0</span>
+                <span class="stat-label">Card Actions</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="commentActivities">0</span>
+                <span class="stat-label">Comments</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="boardsAffected">0</span>
+                <span class="stat-label">Boards</span>
+            </div>
+        </div>
+        
+        <div class="activities">
+            <div id="activityList">
+                <div class="empty-state">
+                    <div class="empty-icon">📅</div>
+                    <h3>Select a date range to view your activity</h3>
+                    <p>Choose start and end dates above to see your Trello activity for that period.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Trello Power-Up initialization
+        let t = TrelloPowerUp.iframe();
+        
+        // Activity type icons and colors
+        const activityTypes = {
+            createCard: { icon: '📋', name: 'Card Created', class: 'type-card' },
+            updateCard: { icon: '✏️', name: 'Card Updated', class: 'type-card' },
+            commentCard: { icon: '💬', name: 'Comment Added', class: 'type-comment' },
+            addAttachmentToCard: { icon: '📎', name: 'Attachment Added', class: 'type-attachment' },
+            addChecklistToCard: { icon: '☑️', name: 'Checklist Added', class: 'type-checklist' },
+            addMemberToCard: { icon: '👤', name: 'Member Added', class: 'type-member' },
+            addLabelToCard: { icon: '🏷️', name: 'Label Added', class: 'type-label' },
+            moveCard: { icon: '↔️', name: 'Card Moved', class: 'type-card' },
+            deleteCard: { icon: '🗑️', name: 'Card Deleted', class: 'type-card' },
+            default: { icon: '⚡', name: 'Activity', class: 'type-other' }
+        };
+        
+        let allBoards = [];
+        let currentActivities = [];
+        
+        // Initialize the interface
+        async function init() {
+            // Set default dates (last 7 days)
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - 7);
+            
+            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+            
+            // Validate date range on change
+            document.getElementById('startDate').addEventListener('change', validateDateRange);
+            document.getElementById('endDate').addEventListener('change', validateDateRange);
+            
+            // Load boards for filter
+            await loadBoards();
+            
+            // Set up event listeners
+            document.getElementById('loadActivities').addEventListener('click', loadActivities);
+            
+            // Load initial activities
+            await loadActivities();
+        }
+        
+        function validateDateRange() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            const daysDiff = (endDate - startDate) / (1000 * 60 * 60 * 24);
+            
+            if (daysDiff > 31) {
+                alert('Date range cannot exceed 31 days');
+                const newEndDate = new Date(startDate);
+                newEndDate.setDate(startDate.getDate() + 31);
+                document.getElementById('endDate').value = newEndDate.toISOString().split('T')[0];
+            }
+            
+            if (startDate > endDate) {
+                document.getElementById('endDate').value = document.getElementById('startDate').value;
+            }
+        }
+        
+        async function loadBoards() {
+            try {
+                // Get member token for API calls
+                const token = await t.getRestApi().getToken();
+                const member = await t.member('me');
+                
+                // Fetch user's boards
+                const response = await fetch(`https://api.trello.com/1/members/me/boards?key=${window.TrelloPowerUp.util.getAppKey()}&token=${token}&filter=open`);
+                allBoards = await response.json();
+                
+                const boardFilter = document.getElementById('boardFilter');
+                boardFilter.innerHTML = '<option value="">All Boards</option>';
+                
+                allBoards.forEach(board => {
+                    const option = document.createElement('option');
+                    option.value = board.id;
+                    option.textContent = board.name;
+                    boardFilter.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading boards:', error);
+                // Fallback: add current board only
+                const board = await t.board('all');
+                if (board) {
+                    allBoards = [board];
+                    const option = document.createElement('option');
+                    option.value = board.id;
+                    option.textContent = board.name;
+                    document.getElementById('boardFilter').appendChild(option);
+                }
+            }
+        }
+        
+        async function loadActivities() {
+            const loadBtn = document.getElementById('loadActivities');
+            const activityList = document.getElementById('activityList');
+            const statsDiv = document.getElementById('stats');
+            
+            loadBtn.disabled = true;
+            loadBtn.textContent = 'Loading...';
+            
+            activityList.innerHTML = '<div class="loading">🔄 Loading activities...</div>';
+            statsDiv.style.display = 'none';
+            
+            try {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const selectedBoard = document.getElementById('boardFilter').value;
+                
+                const token = await t.getRestApi().getToken();
+                const member = await t.member('me');
+                
+                let activities = [];
+                const boardsToQuery = selectedBoard ? [allBoards.find(b => b.id === selectedBoard)] : allBoards;
+                
+                // Fetch activities from selected boards
+                for (const board of boardsToQuery.filter(Boolean)) {
+                    try {
+                        const url = `https://api.trello.com/1/boards/${board.id}/actions` +
+                            `?key=${window.TrelloPowerUp.util.getAppKey()}&token=${token}` +
+                            `&since=${startDate}&before=${new Date(endDate + 'T23:59:59Z').toISOString()}` +
+                            `&limit=1000&member=me`;
+                        
+                        const response = await fetch(url);
+                        if (response.ok) {
+                            const boardActivities = await response.json();
+                            activities = activities.concat(boardActivities.map(activity => ({
+                                ...activity,
+                                boardName: board.name,
+                                boardId: board.id
+                            })));
+                        }
+                    } catch (error) {
+                        console.error(`Error loading activities for board ${board.name}:`, error);
+                    }
+                }
+                
+                // Sort activities by date (newest first)
+                activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                currentActivities = activities;
+                displayActivities(activities);
+                updateStats(activities);
+                
+            } catch (error) {
+                console.error('Error loading activities:', error);
+                activityList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">⚠️</div>
+                        <h3>Error loading activities</h3>
+                        <p>There was an error loading your Trello activities. Please try again.</p>
+                    </div>
+                `;
+            } finally {
+                loadBtn.disabled = false;
+                loadBtn.textContent = 'Load Activities';
+            }
+        }
+        
+        function displayActivities(activities) {
+            const activityList = document.getElementById('activityList');
+            
+            if (activities.length === 0) {
+                activityList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h3>No activities found</h3>
+                        <p>No activities were found for the selected date range and filters.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const activitiesHTML = activities.map(activity => {
+                const type = activityTypes[activity.type] || activityTypes.default;
+                const date = new Date(activity.date);
+                const timeAgo = getTimeAgo(date);
+                
+                let description = getActivityDescription(activity);
+                
+                return `
+                    <div class="activity-item">
+                        <div class="activity-icon ${type.class}">
+                            ${type.icon}
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-text">${description}</p>
+                            <div class="activity-meta">
+                                <span class="activity-board">${activity.boardName}</span>
+                                <span>${timeAgo}</span>
+                                <span>${type.name}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            activityList.innerHTML = activitiesHTML;
+        }
+        
+        function getActivityDescription(activity) {
+            const memberName = activity.memberCreator ? activity.memberCreator.fullName : 'Someone';
+            
+            switch (activity.type) {
+                case 'createCard':
+                    return `Created card "${activity.data.card.name}"`;
+                case 'updateCard':
+                    return `Updated card "${activity.data.card.name}"`;
+                case 'commentCard':
+                    return `Commented on "${activity.data.card.name}": "${activity.data.text.substring(0, 100)}${activity.data.text.length > 100 ? '...' : ''}"`;
+                case 'addAttachmentToCard':
+                    return `Added attachment to "${activity.data.card.name}"`;
+                case 'addChecklistToCard':
+                    return `Added checklist "${activity.data.checklist.name}" to "${activity.data.card.name}"`;
+                case 'addMemberToCard':
+                    return `Added member to "${activity.data.card.name}"`;
+                case 'addLabelToCard':
+                    return `Added label to "${activity.data.card.name}"`;
+                case 'moveCard':
+                    const fromList = activity.data.listBefore ? activity.data.listBefore.name : 'Unknown';
+                    const toList = activity.data.listAfter ? activity.data.listAfter.name : 'Unknown';
+                    return `Moved "${activity.data.card.name}" from "${fromList}" to "${toList}"`;
+                case 'deleteCard':
+                    return `Deleted card "${activity.data.card.name}"`;
+                default:
+                    return `${activity.type.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}`;
+            }
+        }
+        
+        function updateStats(activities) {
+            const statsDiv = document.getElementById('stats');
+            const totalActivities = activities.length;
+            
+            const cardActivities = activities.filter(a => 
+                ['createCard', 'updateCard', 'moveCard', 'deleteCard'].includes(a.type)
+            ).length;
+            
+            const commentActivities = activities.filter(a => a.type === 'commentCard').length;
+            
+            const uniqueBoards = new Set(activities.map(a => a.boardId)).size;
+            
+            document.getElementById('totalActivities').textContent = totalActivities;
+            document.getElementById('cardActivities').textContent = cardActivities;
+            document.getElementById('commentActivities').textContent = commentActivities;
+            document.getElementById('boardsAffected').textContent = uniqueBoards;
+            
+            statsDiv.style.display = totalActivities > 0 ? 'grid' : 'none';
+        }
+        
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+            if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+            return date.toLocaleDateString();
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // Trello Power-Up configuration
+        window.TrelloPowerUp.initialize({
+            'show-settings': function(t, options) {
+                return t.popup({
+                    title: 'Activity Tracker Settings',
+                    url: './settings.html',
+                    height: 184
+                });
+            }
+        });
+    </script>
+</body>
+</html>
