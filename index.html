@@ -72,6 +72,15 @@
             font-weight: 500;
             margin-bottom: 16px;
         }
+        
+        /* Activity Type Filter Styles */
+        .type-card { background: #61bd4f; }
+        .type-comment { background: #f2d600; }
+        .type-attachment { background: #ff9f1a; }
+        .type-checklist { background: #c377e0; }
+        .type-member { background: #0079bf; }
+        .type-label { background: #eb5a46; }
+        .type-other { background: #838c91; }
     </style>
 </head>
 <body>
@@ -278,6 +287,42 @@
             setupOverlayEventListeners();
         }
         
+        // Global variables for activity tracking
+        const activityTypes = {
+            createCard: { icon: '📋', name: 'Card Created', class: 'type-card', common: true },
+            updateCard: { icon: '✏️', name: 'Card Updated', class: 'type-card', common: true },
+            commentCard: { icon: '💬', name: 'Comment Added', class: 'type-comment', common: true },
+            addAttachmentToCard: { icon: '📎', name: 'Attachment Added', class: 'type-attachment', common: false },
+            addChecklistToCard: { icon: '☑️', name: 'Checklist Added', class: 'type-checklist', common: false },
+            addMemberToCard: { icon: '👤', name: 'Member Added', class: 'type-member', common: false },
+            addLabelToCard: { icon: '🏷️', name: 'Label Added', class: 'type-label', common: false },
+            moveCard: { icon: '↔️', name: 'Card Moved', class: 'type-card', common: true },
+            deleteCard: { icon: '🗑️', name: 'Card Deleted', class: 'type-card', common: false },
+            removeLabelFromCard: { icon: '🏷️', name: 'Label Removed', class: 'type-label', common: false },
+            removeMemberFromCard: { icon: '👤', name: 'Member Removed', class: 'type-member', common: false },
+            updateCheckItemStateOnCard: { icon: '✅', name: 'Checklist Item Updated', class: 'type-checklist', common: false },
+            createList: { icon: '📝', name: 'List Created', class: 'type-other', common: false },
+            updateList: { icon: '📝', name: 'List Updated', class: 'type-other', common: false },
+            moveListFromBoard: { icon: '📝', name: 'List Moved', class: 'type-other', common: false },
+            copyCard: { icon: '📄', name: 'Card Copied', class: 'type-card', common: false },
+            convertToCardFromCheckItem: { icon: '🔄', name: 'Checklist Item to Card', class: 'type-card', common: false },
+            addToOrganizationBoard: { icon: '🏢', name: 'Added to Organization', class: 'type-other', common: false },
+            removeFromOrganizationBoard: { icon: '🏢', name: 'Removed from Organization', class: 'type-other', common: false },
+            updateBoard: { icon: '📊', name: 'Board Updated', class: 'type-other', common: false },
+            default: { icon: '⚡', name: 'Other Activity', class: 'type-other', common: false }
+        };
+        
+        let allBoards = [];
+        let currentActivities = [];
+        let selectedActivityTypes = new Set();
+        
+        // Initialize with common activity types selected
+        Object.entries(activityTypes).forEach(([type, config]) => {
+            if (config.common) {
+                selectedActivityTypes.add(type);
+            }
+        });
+        
         function setupOverlayEventListeners() {
             // Set default dates (last 7 days)
             const endDate = new Date();
@@ -288,6 +333,29 @@
             const endInput = document.getElementById('endDate');
             if (startInput) startInput.value = startDate.toISOString().split('T')[0];
             if (endInput) endInput.value = endDate.toISOString().split('T')[0];
+            
+            // Date validation
+            if (startInput && endInput) {
+                const validateDates = () => {
+                    const start = new Date(startInput.value);
+                    const end = new Date(endInput.value);
+                    const daysDiff = (end - start) / (1000 * 60 * 60 * 24);
+                    
+                    if (daysDiff > 31) {
+                        alert('Date range cannot exceed 31 days');
+                        const newEnd = new Date(start);
+                        newEnd.setDate(start.getDate() + 31);
+                        endInput.value = newEnd.toISOString().split('T')[0];
+                    }
+                    
+                    if (start > end) {
+                        endInput.value = startInput.value;
+                    }
+                };
+                
+                startInput.addEventListener('change', validateDates);
+                endInput.addEventListener('change', validateDates);
+            }
             
             // Close button
             const closeBtn = document.getElementById('closeOverlay');
@@ -307,48 +375,33 @@
             // Load activities button
             const loadBtn = document.getElementById('loadActivities');
             if (loadBtn) {
-                loadBtn.addEventListener('click', loadActivitiesDemo);
+                loadBtn.addEventListener('click', loadRealActivities);
             }
         }
         
-        async function loadActivitiesDemo() {
+        async function loadRealActivities() {
+            const loadBtn = document.getElementById('loadActivities');
             const resultsDiv = document.getElementById('activityResults');
-            if (!resultsDiv) return;
             
-            resultsDiv.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #5e6c84;">
-                    <div style="font-size: 32px; margin-bottom: 16px;">🔄</div>
-                    <h3>Loading your activities...</h3>
-                    <p>Connecting to Trello...</p>
-                </div>
-            `;
+            if (!loadBtn || !resultsDiv) return;
+            
+            loadBtn.disabled = true;
+            loadBtn.textContent = 'Loading...';
             
             try {
-                if (!window.TrelloPowerUp) {
-                    throw new Error('TrelloPowerUp not available');
-                }
+                console.log('🔧 Starting real activity loading...');
                 
-                console.log('🔧 Getting Trello context...');
                 const t = window.TrelloPowerUp.iframe({
                     appKey: 'caeeec29db6d299bd3b65e9743854d5d',
                     appName: 'My Activity Search'
                 });
-
-                console.log('🔧 Requesting Trello token...');
                 
-                // Try to get token without authorization first (for already authorized users)
+                // Try to get token, show authorization if needed
                 let token;
                 try {
                     token = await t.getRestApi().getToken();
-                    console.log('🔧 Token response:', token ? 'received' : 'undefined');
                 } catch (tokenError) {
-                    console.log('🔧 Initial token request failed:', tokenError.message);
-                }
-                
-                // If no token, try with explicit authorization request
-                if (!token) {
-                    console.log('🔧 No token found, requesting with authorization...');
-                    
+                    // Show authorization UI if no token
                     resultsDiv.innerHTML = `
                         <div style="text-align: center; padding: 40px; color: #0079bf;">
                             <div style="font-size: 32px; margin-bottom: 16px;">🔑</div>
@@ -362,111 +415,400 @@
                     if (authBtn) {
                         authBtn.addEventListener('click', async () => {
                             try {
-                                console.log('🔧 User clicked authorize, requesting token...');
                                 authBtn.textContent = 'Authorizing...';
                                 authBtn.disabled = true;
                                 
-                                // Force authorization with explicit scope
                                 token = await t.getRestApi().authorize({
                                     scope: 'read'
                                 });
                                 
-                                console.log('🔧 Authorization response:', token ? 'received' : 'undefined');
-                                
                                 if (token) {
-                                    console.log('✅ Authorization successful!');
-                                    await testApiConnection(token, resultsDiv);
+                                    // Retry loading activities
+                                    await continueLoadingActivities(token, resultsDiv);
                                 } else {
-                                    // Try alternative method
-                                    console.log('🔧 Trying alternative authorization method...');
-                                    token = await t.getRestApi().getToken({
-                                        scope: 'read'
-                                    });
-                                    
-                                    if (token) {
-                                        console.log('✅ Alternative method successful!');
-                                        await testApiConnection(token, resultsDiv);
-                                    } else {
-                                        throw new Error('Both authorization methods returned undefined token');
-                                    }
+                                    throw new Error('Authorization failed');
                                 }
-                                
                             } catch (authError) {
-                                console.error('❌ Authorization failed:', authError);
+                                console.error('Authorization failed:', authError);
                                 resultsDiv.innerHTML = `
                                     <div style="text-align: center; padding: 40px; color: #eb5a46;">
                                         <div style="font-size: 32px; margin-bottom: 16px;">❌</div>
                                         <h3>Authorization Failed</h3>
-                                        <p>Unable to authorize access to Trello.</p>
-                                        <p style="font-size: 14px; color: #5e6c84; margin-top: 10px;">Error: ${authError.message}</p>
-                                        <button onclick="loadActivitiesDemo()" style="margin-top: 15px; padding: 8px 16px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>
+                                        <p>${authError.message}</p>
+                                        <button onclick="loadRealActivities()" style="margin-top: 15px; padding: 8px 16px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>
                                     </div>
                                 `;
                             }
                         });
                     }
-                    return; // Exit here, wait for user authorization
+                    return;
                 }
                 
-                // If we have a token, test it
-                if (token) {
-                    console.log('✅ Got token, testing API connection...');
-                    await testApiConnection(token, resultsDiv);
-                } else {
-                    throw new Error('Token is undefined after all attempts');
+                if (!token) {
+                    throw new Error('No authorization token available');
                 }
+                
+                await continueLoadingActivities(token, resultsDiv);
                 
             } catch (error) {
-                console.error('Error loading activities:', error);
-                console.error('Error details:', error.message);
-                
-                resultsDiv.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #eb5a46;">
-                        <div style="font-size: 32px; margin-bottom: 16px;">⚠️</div>
-                        <h3>Connection Issue</h3>
-                        <p>Unable to connect to Trello API.</p>
-                        <p style="font-size: 14px; color: #5e6c84; margin-top: 10px;">Error: ${error.message || 'Unknown error'}</p>
-                        <button onclick="loadActivitiesDemo()" style="margin-top: 15px; padding: 8px 16px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>
-                    </div>
-                `;
-            }
-        }
-        
-        async function testApiConnection(token, resultsDiv) {
-            try {
-                console.log('🔧 Testing API connection...');
-                const response = await fetch(`https://api.trello.com/1/members/me?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}`);
-                
-                if (!response.ok) {
-                    throw new Error(`API call failed: ${response.status} ${response.statusText}`);
-                }
-                
-                const member = await response.json();
-                console.log('✅ API call successful, member:', member.fullName);
-                
-                // Show success
-                resultsDiv.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #0079bf;">
-                        <div style="font-size: 32px; margin-bottom: 16px;">✅</div>
-                        <h3>Integration Working!</h3>
-                        <p>Connected as: <strong>${member.fullName}</strong></p>
-                        <p>Your Activity Tracker is successfully connected to Trello.</p>
-                        <p style="font-size: 14px; color: #5e6c84; margin-top: 20px;">Ready for full activity tracking implementation!</p>
-                    </div>
-                `;
-                
-            } catch (apiError) {
-                console.error('❌ API test failed:', apiError);
+                console.error('❌ Error loading activities:', error);
                 resultsDiv.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #eb5a46;">
                         <div style="font-size: 32px; margin-bottom: 16px;">❌</div>
-                        <h3>API Connection Failed</h3>
-                        <p>Connected to Trello but API test failed.</p>
-                        <p style="font-size: 14px; color: #5e6c84; margin-top: 10px;">Error: ${apiError.message}</p>
-                        <button onclick="loadActivitiesDemo()" style="margin-top: 15px; padding: 8px 16px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>
+                        <h3>Error Loading Activities</h3>
+                        <p>Failed to load your Trello activities.</p>
+                        <p style="font-size: 14px; color: #5e6c84; margin-top: 10px;">Error: ${error.message}</p>
+                        <button onclick="loadRealActivities()" style="margin-top: 15px; padding: 8px 16px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>
                     </div>
                 `;
+            } finally {
+                loadBtn.disabled = false;
+                loadBtn.textContent = 'Load Activities';
             }
+        }
+        
+        async function continueLoadingActivities(token, resultsDiv) {
+            // Get date range
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const selectedBoardId = document.getElementById('boardFilter').value;
+            
+            console.log('📅 Date range:', startDate, 'to', endDate);
+            
+            resultsDiv.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #5e6c84;">
+                    <div style="font-size: 32px; margin-bottom: 16px;">🔄</div>
+                    <h3>Loading Activities...</h3>
+                    <p>Fetching your Trello activities for ${startDate} to ${endDate}</p>
+                </div>
+            `;
+            
+            // Load boards first if not already loaded
+            if (allBoards.length === 0) {
+                console.log('📋 Loading boards...');
+                await loadBoards(token);
+            }
+            
+            // Determine which boards to query
+            const boardsToQuery = selectedBoardId ? 
+                allBoards.filter(board => board.id === selectedBoardId) : 
+                allBoards;
+            
+            console.log('📋 Querying', boardsToQuery.length, 'boards');
+            
+            let allActivities = [];
+            
+            // Fetch activities from each board
+            for (const board of boardsToQuery) {
+                try {
+                    console.log(`📋 Loading activities from: ${board.name}`);
+                    
+                    const url = `https://api.trello.com/1/boards/${board.id}/actions` +
+                        `?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}` +
+                        `&since=${startDate}&before=${new Date(endDate + 'T23:59:59Z').toISOString()}` +
+                        `&limit=1000&member=me`;
+                    
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const boardActivities = await response.json();
+                        console.log(`✅ Loaded ${boardActivities.length} activities from ${board.name}`);
+                        
+                        // Add board info to each activity
+                        const enrichedActivities = boardActivities.map(activity => ({
+                            ...activity,
+                            boardName: board.name,
+                            boardId: board.id
+                        }));
+                        
+                        allActivities = allActivities.concat(enrichedActivities);
+                    } else {
+                        console.warn(`⚠️ Failed to load activities from ${board.name}: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error(`❌ Error loading activities from ${board.name}:`, error);
+                }
+            }
+            
+            // Sort activities by date (newest first)
+            allActivities.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            console.log(`✅ Loaded total of ${allActivities.length} activities`);
+            
+            currentActivities = allActivities;
+            
+            // Show activity type filter and display activities
+            showActivityTypeFilter(resultsDiv);
+            displayFilteredActivities();
+        }
+        
+        async function loadBoards(token) {
+            try {
+                const response = await fetch(`https://api.trello.com/1/members/me/boards?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&filter=open`);
+                if (response.ok) {
+                    allBoards = await response.json();
+                    console.log(`✅ Loaded ${allBoards.length} boards`);
+                    
+                    // Populate board filter dropdown
+                    const boardFilter = document.getElementById('boardFilter');
+                    if (boardFilter) {
+                        boardFilter.innerHTML = '<option value="">All Boards</option>';
+                        allBoards.forEach(board => {
+                            const option = document.createElement('option');
+                            option.value = board.id;
+                            option.textContent = board.name;
+                            boardFilter.appendChild(option);
+                        });
+                    }
+                } else {
+                    throw new Error(`Failed to load boards: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('❌ Error loading boards:', error);
+                throw error;
+            }
+        }
+        
+        function showActivityTypeFilter(container) {
+            const filterHtml = `
+                <div style="margin-bottom: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
+                    <h4 style="margin: 0 0 16px 0; color: #172b4d;">Filter by Activity Type</h4>
+                    <div id="activityTypeFilters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px;">
+                        <!-- Activity type checkboxes will be inserted here -->
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="selectAllTypes" style="padding: 6px 12px; background: #f4f5f7; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Select All</button>
+                        <button id="selectNoneTypes" style="padding: 6px 12px; background: #f4f5f7; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Select None</button>
+                        <button id="selectCommonTypes" style="padding: 6px 12px; background: #f4f5f7; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Common Only</button>
+                    </div>
+                </div>
+                <div id="activityStats" style="margin-bottom: 24px;">
+                    <!-- Stats will be inserted here -->
+                </div>
+                <div id="activitiesList">
+                    <!-- Activities will be inserted here -->
+                </div>
+            `;
+            
+            container.innerHTML = filterHtml;
+            
+            // Create activity type checkboxes
+            const filtersContainer = document.getElementById('activityTypeFilters');
+            if (filtersContainer) {
+                // Get unique activity types from current activities
+                const foundTypes = new Set(currentActivities.map(a => a.type));
+                
+                Object.entries(activityTypes).forEach(([type, config]) => {
+                    if (type === 'default' || !foundTypes.has(type)) return;
+                    
+                    const isSelected = selectedActivityTypes.has(type);
+                    const activityCount = currentActivities.filter(a => a.type === type).length;
+                    
+                    const checkboxHtml = `
+                        <div class="activity-type-item" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: ${isSelected ? '#e4f0f6' : 'white'}; border: 1px solid ${isSelected ? '#0079bf' : '#dfe1e6'}; border-radius: 4px; cursor: pointer;">
+                            <input type="checkbox" id="type-${type}" ${isSelected ? 'checked' : ''} style="width: 16px; height: 16px; accent-color: #0079bf;">
+                            <label for="type-${type}" style="flex: 1; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 16px;">${config.icon}</span>
+                                ${config.name}
+                                <span style="font-size: 12px; color: #5e6c84; margin-left: auto;">(${activityCount})</span>
+                            </label>
+                        </div>
+                    `;
+                    
+                    filtersContainer.innerHTML += checkboxHtml;
+                });
+                
+                // Set up event listeners for checkboxes
+                filtersContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.addEventListener('change', (e) => {
+                        const type = e.target.id.replace('type-', '');
+                        const item = e.target.closest('.activity-type-item');
+                        
+                        if (e.target.checked) {
+                            selectedActivityTypes.add(type);
+                            item.style.borderColor = '#0079bf';
+                            item.style.background = '#e4f0f6';
+                        } else {
+                            selectedActivityTypes.delete(type);
+                            item.style.borderColor = '#dfe1e6';
+                            item.style.background = 'white';
+                        }
+                        
+                        displayFilteredActivities();
+                    });
+                    
+                    // Make the whole item clickable
+                    checkbox.closest('.activity-type-item').addEventListener('click', (e) => {
+                        if (e.target !== checkbox) {
+                            checkbox.click();
+                        }
+                    });
+                });
+            }
+            
+            // Set up filter control buttons
+            document.getElementById('selectAllTypes')?.addEventListener('click', () => {
+                selectedActivityTypes.clear();
+                currentActivities.forEach(activity => {
+                    if (activityTypes[activity.type]) {
+                        selectedActivityTypes.add(activity.type);
+                    }
+                });
+                updateCheckboxes();
+                displayFilteredActivities();
+            });
+            
+            document.getElementById('selectNoneTypes')?.addEventListener('click', () => {
+                selectedActivityTypes.clear();
+                updateCheckboxes();
+                displayFilteredActivities();
+            });
+            
+            document.getElementById('selectCommonTypes')?.addEventListener('click', () => {
+                selectedActivityTypes.clear();
+                Object.entries(activityTypes).forEach(([type, config]) => {
+                    if (config.common) {
+                        selectedActivityTypes.add(type);
+                    }
+                });
+                updateCheckboxes();
+                displayFilteredActivities();
+            });
+        }
+        
+        function updateCheckboxes() {
+            document.querySelectorAll('#activityTypeFilters input[type="checkbox"]').forEach(checkbox => {
+                const type = checkbox.id.replace('type-', '');
+                const item = checkbox.closest('.activity-type-item');
+                const isSelected = selectedActivityTypes.has(type);
+                
+                checkbox.checked = isSelected;
+                item.style.borderColor = isSelected ? '#0079bf' : '#dfe1e6';
+                item.style.background = isSelected ? '#e4f0f6' : 'white';
+            });
+        }
+        
+        function displayFilteredActivities() {
+            const filteredActivities = currentActivities.filter(activity => 
+                selectedActivityTypes.has(activity.type)
+            );
+            
+            console.log(`🔍 Filtered to ${filteredActivities.length} activities from ${selectedActivityTypes.size} selected types`);
+            
+            displayStats(filteredActivities);
+            displayActivitiesList(filteredActivities);
+        }
+        
+        function displayStats(activities) {
+            const statsContainer = document.getElementById('activityStats');
+            if (!statsContainer) return;
+            
+            const totalActivities = activities.length;
+            const cardActivities = activities.filter(a => 
+                ['createCard', 'updateCard', 'moveCard', 'deleteCard'].includes(a.type)
+            ).length;
+            const commentActivities = activities.filter(a => a.type === 'commentCard').length;
+            const uniqueBoards = new Set(activities.map(a => a.boardId)).size;
+            
+            statsContainer.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+                    <div style="background: linear-gradient(135deg, #0079bf, #005a8b); color: white; padding: 16px; border-radius: 8px; text-align: center;">
+                        <span style="font-size: 28px; font-weight: bold; display: block;">${totalActivities}</span>
+                        <span style="font-size: 12px; opacity: 0.9; text-transform: uppercase;">Total Activities</span>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #61bd4f, #4d9c3d); color: white; padding: 16px; border-radius: 8px; text-align: center;">
+                        <span style="font-size: 28px; font-weight: bold; display: block;">${cardActivities}</span>
+                        <span style="font-size: 12px; opacity: 0.9; text-transform: uppercase;">Card Actions</span>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f2d600, #d4b900); color: white; padding: 16px; border-radius: 8px; text-align: center;">
+                        <span style="font-size: 28px; font-weight: bold; display: block;">${commentActivities}</span>
+                        <span style="font-size: 12px; opacity: 0.9; text-transform: uppercase;">Comments</span>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #c377e0, #9c5db8); color: white; padding: 16px; border-radius: 8px; text-align: center;">
+                        <span style="font-size: 28px; font-weight: bold; display: block;">${uniqueBoards}</span>
+                        <span style="font-size: 12px; opacity: 0.9; text-transform: uppercase;">Boards</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function displayActivitiesList(activities) {
+            const listContainer = document.getElementById('activitiesList');
+            if (!listContainer) return;
+            
+            if (activities.length === 0) {
+                listContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: #5e6c84; background: white; border-radius: 8px; border: 1px solid #dfe1e6;">
+                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">📭</div>
+                        <h3>No activities found</h3>
+                        <p>No activities match the selected filters for this date range.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const activitiesHtml = activities.map(activity => {
+                const type = activityTypes[activity.type] || activityTypes.default;
+                const date = new Date(activity.date);
+                const timeAgo = getTimeAgo(date);
+                const description = getActivityDescription(activity);
+                
+                return `
+                    <div style="display: flex; align-items: flex-start; padding: 16px; margin-bottom: 12px; background: white; border: 1px solid #dfe1e6; border-radius: 8px; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+                        <div style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 14px; font-weight: bold; color: white; flex-shrink: 0;" class="${type.class}">
+                            ${type.icon}
+                        </div>
+                        <div style="flex-grow: 1;">
+                            <p style="font-size: 14px; line-height: 1.4; margin: 0 0 4px 0;">${description}</p>
+                            <div style="font-size: 12px; color: #5e6c84; display: flex; gap: 16px;">
+                                <span style="font-weight: 500;">${activity.boardName}</span>
+                                <span>${timeAgo}</span>
+                                <span>${type.name}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            listContainer.innerHTML = activitiesHtml;
+        }
+        
+        function getActivityDescription(activity) {
+            switch (activity.type) {
+                case 'createCard':
+                    return `Created card "${activity.data.card.name}"`;
+                case 'updateCard':
+                    return `Updated card "${activity.data.card.name}"`;
+                case 'commentCard':
+                    const comment = activity.data.text || '';
+                    return `Commented on "${activity.data.card.name}": "${comment.substring(0, 100)}${comment.length > 100 ? '...' : ''}"`;
+                case 'addAttachmentToCard':
+                    return `Added attachment to "${activity.data.card.name}"`;
+                case 'addChecklistToCard':
+                    return `Added checklist "${activity.data.checklist.name}" to "${activity.data.card.name}"`;
+                case 'addMemberToCard':
+                    return `Added member to "${activity.data.card.name}"`;
+                case 'addLabelToCard':
+                    return `Added label to "${activity.data.card.name}"`;
+                case 'moveCard':
+                    const fromList = activity.data.listBefore ? activity.data.listBefore.name : 'Unknown';
+                    const toList = activity.data.listAfter ? activity.data.listAfter.name : 'Unknown';
+                    return `Moved "${activity.data.card.name}" from "${fromList}" to "${toList}"`;
+                case 'deleteCard':
+                    return `Deleted card "${activity.data.card.name}"`;
+                default:
+                    return activity.type.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+            }
+        }
+        
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+            if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+            return date.toLocaleDateString();
         }
         
         function initializePowerUp() {
@@ -557,14 +899,6 @@
                         });
                     },
                     
-                    'on-enable': function(t, options) {
-                        console.log('🎯 On-enable called');
-                        return t.alert({
-                            message: '🎉 Activity Tracker enabled! Look for the "Activity Tracker" button in your board menu.',
-                            duration: 5
-                        });
-                    },
-                    
                     'authorization-status': function(t, options) {
                         console.log('🎯 Authorization status check called');
                         return t.getRestApi().getToken()
@@ -585,6 +919,14 @@
                             url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?mode=authorize',
                             height: 400,
                             args: { source: 'authorization' }
+                        });
+                    },
+                    
+                    'on-enable': function(t, options) {
+                        console.log('🎯 On-enable called');
+                        return t.alert({
+                            message: '🎉 Activity Tracker enabled! Look for the "Activity Tracker" button in your board menu.',
+                            duration: 5
                         });
                     }
                 });
