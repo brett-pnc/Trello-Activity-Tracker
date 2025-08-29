@@ -271,6 +271,20 @@
                         </div>
                     </div>
                     
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">User Filter</label>
+                            <select id="userFilter" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;">
+                                <option value="">All Users</option>
+                            </select>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Export</label>
+                            <button id="exportCSV" style="padding: 8px 12px; background: #61bd4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; align-self: start;" disabled>Export CSV</button>
+                        </div>
+                    </div>
+                    
                     <div id="activityResults" style="text-align: center; padding: 40px 20px; color: #5e6c84; background: white; border-radius: 8px; border: 1px solid #dfe1e6;">
                         <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">📅</div>
                         <h3>Ready to track your activities!</h3>
@@ -310,6 +324,8 @@
         let allBoards = [];
         let currentActivities = [];
         let selectedActivityTypes = new Set();
+        let allUsers = new Map(); // Map of user ID to user info
+        let selectedUserId = '';
         
         // Initialize with common activity types selected
         Object.entries(activityTypes).forEach(([type, config]) => {
@@ -358,6 +374,24 @@
             const loadBtn = document.getElementById('loadActivities');
             if (loadBtn) {
                 loadBtn.addEventListener('click', loadRealActivities);
+            }
+            
+            // User filter change
+            const userFilter = document.getElementById('userFilter');
+            if (userFilter) {
+                userFilter.addEventListener('change', (e) => {
+                    selectedUserId = e.target.value;
+                    console.log('👤 User filter changed to:', selectedUserId || 'All users');
+                    if (currentActivities.length > 0) {
+                        displayFilteredActivities();
+                    }
+                });
+            }
+            
+            // Export CSV button
+            const exportBtn = document.getElementById('exportCSV');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', exportToCSV);
             }
         }
         
@@ -578,6 +612,9 @@
             
             currentActivities = allActivities;
             
+            // Extract unique users from activities
+            extractUsers(allActivities);
+            
             if (allActivities.length === 0) {
                 // Show helpful message if no activities found
                 resultsDiv.innerHTML = `
@@ -607,6 +644,52 @@
             displayFilteredActivities();
         }
         
+        function extractUsers(activities) {
+            console.log('👥 Extracting users from activities...');
+            
+            allUsers.clear();
+            
+            activities.forEach(activity => {
+                if (activity.memberCreator) {
+                    const userId = activity.memberCreator.id;
+                    if (!allUsers.has(userId)) {
+                        allUsers.set(userId, {
+                            id: userId,
+                            fullName: activity.memberCreator.fullName,
+                            username: activity.memberCreator.username || activity.memberCreator.fullName,
+                            initials: activity.memberCreator.initials || activity.memberCreator.fullName.substring(0, 2).toUpperCase()
+                        });
+                    }
+                }
+            });
+            
+            console.log('👥 Found users:', Array.from(allUsers.values()).map(u => u.fullName));
+            
+            // Populate user filter dropdown
+            const userFilter = document.getElementById('userFilter');
+            if (userFilter) {
+                userFilter.innerHTML = '<option value="">All Users</option>';
+                
+                // Sort users by name
+                const sortedUsers = Array.from(allUsers.values()).sort((a, b) => 
+                    a.fullName.localeCompare(b.fullName)
+                );
+                
+                sortedUsers.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    option.textContent = `${user.fullName}${user.username !== user.fullName ? ` (@${user.username})` : ''}`;
+                    userFilter.appendChild(option);
+                });
+            }
+            
+            // Enable export button now that we have data
+            const exportBtn = document.getElementById('exportCSV');
+            if (exportBtn) {
+                exportBtn.disabled = false;
+            }
+        }
+
         async function loadBoards(token) {
             try {
                 const response = await fetch(`https://api.trello.com/1/members/me/boards?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&filter=open`);
@@ -754,11 +837,18 @@
         }
         
         function displayFilteredActivities() {
-            const filteredActivities = currentActivities.filter(activity => 
+            let filteredActivities = currentActivities.filter(activity => 
                 selectedActivityTypes.has(activity.type)
             );
             
-            console.log(`🔍 Filtered to ${filteredActivities.length} activities from ${selectedActivityTypes.size} selected types`);
+            // Apply user filter
+            if (selectedUserId) {
+                filteredActivities = filteredActivities.filter(activity => 
+                    activity.memberCreator && activity.memberCreator.id === selectedUserId
+                );
+            }
+            
+            console.log(`🔍 Filtered to ${filteredActivities.length} activities from ${selectedActivityTypes.size} selected types and user filter: ${selectedUserId || 'all'}`);
             
             displayStats(filteredActivities);
             displayActivitiesList(filteredActivities);
@@ -817,6 +907,9 @@
                 const date = new Date(activity.date);
                 const timeAgo = getTimeAgo(date);
                 const description = getActivityDescription(activity);
+                const user = activity.memberCreator;
+                const userName = user ? `@${user.username || user.fullName}` : 'Unknown User';
+                const userInitials = user ? (user.initials || user.fullName.substring(0, 2).toUpperCase()) : '?';
                 
                 return `
                     <div style="display: flex; align-items: flex-start; padding: 16px; margin-bottom: 12px; background: white; border: 1px solid #dfe1e6; border-radius: 8px; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
@@ -824,12 +917,15 @@
                             ${type.icon}
                         </div>
                         <div style="flex-grow: 1;">
-                            <p style="font-size: 14px; line-height: 1.4; margin: 0 0 4px 0;">${description}</p>
+                            <p style="font-size: 14px; line-height: 1.4; margin: 0 0 4px 0;"><strong style="color: #0079bf;">${userName}</strong> ${description}</p>
                             <div style="font-size: 12px; color: #5e6c84; display: flex; gap: 16px;">
                                 <span style="font-weight: 500;">${activity.boardName}</span>
                                 <span>${timeAgo}</span>
                                 <span>${type.name}</span>
                             </div>
+                        </div>
+                        <div style="width: 32px; height: 32px; border-radius: 50%; background: #dfe1e6; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #5e6c84; flex-shrink: 0; margin-left: 8px;">
+                            ${userInitials}
                         </div>
                     </div>
                 `;
@@ -839,33 +935,143 @@
         }
         
         function getActivityDescription(activity) {
+            const baseDescription = getBaseActivityDescription(activity);
+            // Remove the implied subject since we show the user separately
+            return baseDescription.replace(/^(Created|Updated|Commented|Added|Moved|Deleted|Removed)/, (match) => {
+                return match.toLowerCase();
+            });
+        }
+        
+        function getBaseActivityDescription(activity) {
             switch (activity.type) {
                 case 'createCard':
-                    return `Created card "${activity.data.card.name}"`;
+                    return `created card "${activity.data.card.name}"`;
                 case 'updateCard':
-                    return `Updated card "${activity.data.card.name}"`;
+                    return `updated card "${activity.data.card.name}"`;
                 case 'commentCard':
                     const comment = activity.data.text || '';
-                    return `Commented on "${activity.data.card.name}": "${comment.substring(0, 100)}${comment.length > 100 ? '...' : ''}"`;
+                    return `commented on "${activity.data.card.name}": "${comment.substring(0, 100)}${comment.length > 100 ? '...' : ''}"`;
                 case 'addAttachmentToCard':
-                    return `Added attachment to "${activity.data.card.name}"`;
+                    return `added attachment to "${activity.data.card.name}"`;
                 case 'addChecklistToCard':
-                    return `Added checklist "${activity.data.checklist.name}" to "${activity.data.card.name}"`;
+                    return `added checklist "${activity.data.checklist.name}" to "${activity.data.card.name}"`;
                 case 'addMemberToCard':
-                    return `Added member to "${activity.data.card.name}"`;
+                    return `added member to "${activity.data.card.name}"`;
                 case 'addLabelToCard':
-                    return `Added label to "${activity.data.card.name}"`;
+                    return `added label to "${activity.data.card.name}"`;
                 case 'moveCard':
                     const fromList = activity.data.listBefore ? activity.data.listBefore.name : 'Unknown';
                     const toList = activity.data.listAfter ? activity.data.listAfter.name : 'Unknown';
-                    return `Moved "${activity.data.card.name}" from "${fromList}" to "${toList}"`;
+                    return `moved "${activity.data.card.name}" from "${fromList}" to "${toList}"`;
                 case 'deleteCard':
-                    return `Deleted card "${activity.data.card.name}"`;
+                    return `deleted card "${activity.data.card.name}"`;
                 default:
                     return activity.type.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
             }
         }
         
+        function exportToCSV() {
+            console.log('📊 Starting CSV export...');
+            
+            // Get current filtered activities
+            let filteredActivities = currentActivities.filter(activity => 
+                selectedActivityTypes.has(activity.type)
+            );
+            
+            if (selectedUserId) {
+                filteredActivities = filteredActivities.filter(activity => 
+                    activity.memberCreator && activity.memberCreator.id === selectedUserId
+                );
+            }
+            
+            if (filteredActivities.length === 0) {
+                alert('No activities to export. Please adjust your filters.');
+                return;
+            }
+            
+            console.log(`📊 Exporting ${filteredActivities.length} activities to CSV`);
+            
+            // Create CSV headers
+            const headers = [
+                'Date',
+                'Time',
+                'User',
+                'Username', 
+                'Activity Type',
+                'Description',
+                'Board',
+                'Card Name',
+                'List From',
+                'List To',
+                'Comment Text'
+            ];
+            
+            // Convert activities to CSV rows
+            const csvRows = [headers.join(',')];
+            
+            filteredActivities.forEach(activity => {
+                const date = new Date(activity.date);
+                const user = activity.memberCreator;
+                const type = activityTypes[activity.type] || activityTypes.default;
+                
+                // Extract detailed information
+                const cardName = activity.data?.card?.name || '';
+                const listFrom = activity.data?.listBefore?.name || '';
+                const listTo = activity.data?.listAfter?.name || '';
+                const commentText = activity.data?.text || '';
+                
+                const row = [
+                    date.toLocaleDateString(),
+                    date.toLocaleTimeString(),
+                    user ? `"${user.fullName}"` : 'Unknown',
+                    user ? `"@${user.username || user.fullName}"` : '',
+                    `"${type.name}"`,
+                    `"${getBaseActivityDescription(activity)}"`,
+                    `"${activity.boardName}"`,
+                    `"${cardName}"`,
+                    `"${listFrom}"`,
+                    `"${listTo}"`,
+                    `"${commentText.replace(/"/g, '""')}"`  // Escape quotes in comments
+                ];
+                
+                csvRows.push(row.join(','));
+            });
+            
+            // Create and download CSV file
+            const csvContent = csvRows.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            
+            // Generate filename with date range
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const filename = `trello-activities-${startDate}-to-${endDate}.csv`;
+            
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            console.log(`✅ CSV exported: ${filename}`);
+            
+            // Show success message
+            const exportBtn = document.getElementById('exportCSV');
+            if (exportBtn) {
+                const originalText = exportBtn.textContent;
+                exportBtn.textContent = `✅ Exported ${filteredActivities.length} activities`;
+                exportBtn.style.background = '#61bd4f';
+                
+                setTimeout(() => {
+                    exportBtn.textContent = originalText;
+                    exportBtn.style.background = '#61bd4f';
+                }, 3000);
+            }
+        }
+
         function getTimeAgo(date) {
             const now = new Date();
             const diffInSeconds = Math.floor((now - date) / 1000);
