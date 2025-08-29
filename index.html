@@ -104,6 +104,176 @@
     </div>
 
     <script>
+        // Check if we're in overlay mode
+        const urlParams = new URLSearchParams(window.location.search);
+        const isOverlayMode = urlParams.get('mode') === 'overlay';
+        
+        if (isOverlayMode) {
+            // Hide the info page and show overlay content
+            document.body.innerHTML = `
+                <div id="overlay-container" style="padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
+                        <h2 style="margin: 0; color: #172b4d;">📊 Activity Tracker</h2>
+                        <button id="closeOverlay" style="background: #f4f5f7; border: 1px solid #dfe1e6; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Close</button>
+                    </div>
+                    <div style="text-align: center; padding: 60px 20px; color: #5e6c84;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">🔄</div>
+                        <h3>Loading Activity Tracker...</h3>
+                        <p>Setting up your activity dashboard...</p>
+                    </div>
+                </div>
+            `;
+            
+            // Initialize overlay functionality
+            initializeOverlay();
+            return;
+        }
+        
+        function initializeOverlay() {
+            console.log('🔧 Initializing overlay mode...');
+            
+            // Set up close button
+            const closeBtn = document.getElementById('closeOverlay');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    console.log('🔧 Closing overlay...');
+                    if (window.TrelloPowerUp) {
+                        const t = window.TrelloPowerUp.iframe();
+                        t.closeOverlay();
+                    }
+                });
+            }
+            
+            // Load the full tracker interface
+            setTimeout(() => {
+                loadFullTracker();
+            }, 1000);
+        }
+        
+        function loadFullTracker() {
+            console.log('🔧 Loading full tracker interface...');
+            
+            const container = document.getElementById('overlay-container');
+            if (!container) return;
+            
+            // For now, show a working interface
+            container.innerHTML = `
+                <div style="max-width: 900px; margin: 0 auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #dfe1e6; padding-bottom: 15px;">
+                        <h2 style="margin: 0; color: #172b4d;">📊 Activity Tracker</h2>
+                        <button id="closeOverlay" style="background: #f4f5f7; border: 1px solid #dfe1e6; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px;">Close</button>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 2fr 1fr; gap: 16px; margin-bottom: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Start Date</label>
+                            <input type="date" id="startDate" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white;" />
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">End Date</label>
+                            <input type="date" id="endDate" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white;" />
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Board Filter</label>
+                            <select id="boardFilter" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white;">
+                                <option value="">All Boards</option>
+                            </select>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;"></label>
+                            <button id="loadActivities" style="padding: 10px 20px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; align-self: end;">Load Activities</button>
+                        </div>
+                    </div>
+                    
+                    <div id="activityResults" style="text-align: center; padding: 40px 20px; color: #5e6c84; background: white; border-radius: 8px; border: 1px solid #dfe1e6;">
+                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">📅</div>
+                        <h3>Ready to track your activities!</h3>
+                        <p>Select your date range and click "Load Activities" to see your Trello activity data.</p>
+                    </div>
+                </div>
+            `;
+            
+            // Set up event listeners
+            setupOverlayEvents();
+        }
+        
+        function setupOverlayEvents() {
+            // Set default dates (last 7 days)
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - 7);
+            
+            const startInput = document.getElementById('startDate');
+            const endInput = document.getElementById('endDate');
+            if (startInput) startInput.value = startDate.toISOString().split('T')[0];
+            if (endInput) endInput.value = endDate.toISOString().split('T')[0];
+            
+            // Set up close button
+            const closeBtn = document.getElementById('closeOverlay');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    console.log('🔧 Closing overlay...');
+                    if (window.TrelloPowerUp) {
+                        const t = window.TrelloPowerUp.iframe();
+                        t.closeOverlay();
+                    }
+                });
+            }
+            
+            // Set up load button
+            const loadBtn = document.getElementById('loadActivities');
+            if (loadBtn) {
+                loadBtn.addEventListener('click', function() {
+                    console.log('🔧 Loading activities...');
+                    loadActivities();
+                });
+            }
+        }
+        
+        async function loadActivities() {
+            const resultsDiv = document.getElementById('activityResults');
+            if (!resultsDiv) return;
+            
+            resultsDiv.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #5e6c84;">
+                    <div style="font-size: 32px; margin-bottom: 16px;">🔄</div>
+                    <h3>Loading your activities...</h3>
+                    <p>Fetching data from Trello...</p>
+                </div>
+            `;
+            
+            try {
+                if (window.TrelloPowerUp) {
+                    const t = window.TrelloPowerUp.iframe();
+                    const token = await t.getRestApi().getToken();
+                    console.log('✅ Got Trello token, can load activities');
+                    
+                    // Simulate loading for now
+                    setTimeout(() => {
+                        resultsDiv.innerHTML = `
+                            <div style="text-align: center; padding: 40px; color: #0079bf;">
+                                <div style="font-size: 32px; margin-bottom: 16px;">✅</div>
+                                <h3>Integration Working!</h3>
+                                <p>Your Activity Tracker overlay is successfully connected to Trello.</p>
+                                <p style="font-size: 14px; color: #5e6c84; margin-top: 20px;">Full activity loading functionality will be implemented next.</p>
+                            </div>
+                        `;
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error('Error loading activities:', error);
+                resultsDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #eb5a46;">
+                        <div style="font-size: 32px; margin-bottom: 16px;">⚠️</div>
+                        <h3>Error Loading Activities</h3>
+                        <p>There was an issue connecting to Trello. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
         // POWER-UP INITIALIZATION - This must run first and fast
         console.log('🚀 Starting Power-Up initialization...');
         
@@ -146,7 +316,7 @@
                                 console.log('🚀 Board button clicked');
                                 console.log('🚀 Opening overlay...');
                                 return t.overlay({
-                                    url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/overlay.html',
+                                    url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?mode=overlay',
                                     args: { source: 'board-button' }
                                 }).then(function() {
                                     console.log('✅ Overlay opened successfully');
@@ -168,7 +338,7 @@
                             callback: function(t) {
                                 console.log('🚀 Card button clicked');
                                 return t.overlay({
-                                    url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/overlay.html',
+                                    url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?mode=overlay',
                                     args: { source: 'card-button' }
                                 });
                             }
