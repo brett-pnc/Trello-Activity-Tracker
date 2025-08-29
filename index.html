@@ -202,60 +202,90 @@
                 <div style="text-align: center; padding: 40px; color: #5e6c84;">
                     <div style="font-size: 32px; margin-bottom: 16px;">🔄</div>
                     <h3>Loading your activities...</h3>
-                    <p>Fetching data from Trello...</p>
+                    <p>Connecting to Trello...</p>
                 </div>
             `;
             
             try {
-                if (window.TrelloPowerUp) {
-                    (async () => {
-                        console.log('🔧 Getting Trello context...');
-                        const t = window.TrelloPowerUp.iframe({
-                            appKey: 'caeeec29db6d299bd3b65e9743854d5d',
-                            appName: 'My Activity Search'
-                        });
+                if (!window.TrelloPowerUp) {
+                    throw new Error('TrelloPowerUp not available');
+                }
+                
+                console.log('🔧 Getting Trello context...');
+                const t = window.TrelloPowerUp.iframe({
+                    appKey: 'caeeec29db6d299bd3b65e9743854d5d',
+                    appName: 'My Activity Search'
+                });
 
-                        console.log('🔧 Requesting Trello token...');
-                        const token = await t.getRestApi().getToken({
-                            scope: {
-                                read: true,
-                                write: false,
-                                account: false
-                            }
-                        });
-
-                        if (!token) {
-                            console.error('❌ Token is undefined. User may not have authorized.');
-                            return;
-                        }
-
-                        console.log('✅ Got Trello token successfully:', token);
-
-                        const response = await fetch(`https://api.trello.com/1/members/me?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}`);
-                        const data = await response.json();
-                        console.log('👤 Trello user data:', data);
-                        if (response.ok) {
-                            const member = await response.json();
-                            console.log('✅ API call successful, member:', member.fullName);
-                            
-                            // Show success
-                            setTimeout(() => {
+                console.log('🔧 Requesting Trello token...');
+                
+                // First try to get an existing token
+                let token;
+                try {
+                    token = await t.getRestApi().getToken();
+                } catch (tokenError) {
+                    console.log('🔧 No existing token, requesting authorization...');
+                    
+                    // Show authorization prompt
+                    resultsDiv.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #0079bf;">
+                            <div style="font-size: 32px; margin-bottom: 16px;">🔑</div>
+                            <h3>Authorization Required</h3>
+                            <p>Please authorize the Activity Tracker to access your Trello data.</p>
+                            <button id="authorizeBtn" style="margin-top: 15px; padding: 12px 24px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">Authorize Access</button>
+                        </div>
+                    `;
+                    
+                    // Set up authorization button
+                    const authBtn = document.getElementById('authorizeBtn');
+                    if (authBtn) {
+                        authBtn.addEventListener('click', async () => {
+                            try {
+                                console.log('🔧 Starting authorization process...');
+                                authBtn.textContent = 'Authorizing...';
+                                authBtn.disabled = true;
+                                
+                                // Request token with authorization
+                                token = await t.getRestApi().getToken({
+                                    scope: {
+                                        read: true,
+                                        write: false,
+                                        account: false
+                                    }
+                                });
+                                
+                                if (token) {
+                                    console.log('✅ Authorization successful!');
+                                    // Continue with API test
+                                    await testApiConnection(token, resultsDiv);
+                                } else {
+                                    throw new Error('Authorization failed - no token returned');
+                                }
+                                
+                            } catch (authError) {
+                                console.error('❌ Authorization failed:', authError);
                                 resultsDiv.innerHTML = `
-                                    <div style="text-align: center; padding: 40px; color: #0079bf;">
-                                        <div style="font-size: 32px; margin-bottom: 16px;">✅</div>
-                                        <h3>Integration Working!</h3>
-                                        <p>Connected as: <strong>${member.fullName}</strong></p>
-                                        <p>Your Activity Tracker is successfully connected to Trello.</p>
-                                        <p style="font-size: 14px; color: #5e6c84; margin-top: 20px;">Ready for full activity tracking implementation!</p>
+                                    <div style="text-align: center; padding: 40px; color: #eb5a46;">
+                                        <div style="font-size: 32px; margin-bottom: 16px;">❌</div>
+                                        <h3>Authorization Failed</h3>
+                                        <p>Unable to authorize access to Trello.</p>
+                                        <p style="font-size: 14px; color: #5e6c84; margin-top: 10px;">Error: ${authError.message}</p>
+                                        <button onclick="loadActivitiesDemo()" style="margin-top: 15px; padding: 8px 16px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>
                                     </div>
                                 `;
-                            }, 1000);
-                        } else {
-                            throw new Error(`API call failed: ${response.status}`);
-                        }
-                    })();
-                    
+                            }
+                        });
+                    }
+                    return; // Exit here, wait for user to click authorize
                 }
+                
+                if (token) {
+                    console.log('✅ Got existing token successfully');
+                    await testApiConnection(token, resultsDiv);
+                } else {
+                    throw new Error('Token is undefined after successful call');
+                }
+                
             } catch (error) {
                 console.error('Error loading activities:', error);
                 console.error('Error details:', error.message);
@@ -266,6 +296,43 @@
                         <h3>Connection Issue</h3>
                         <p>Unable to connect to Trello API.</p>
                         <p style="font-size: 14px; color: #5e6c84; margin-top: 10px;">Error: ${error.message || 'Unknown error'}</p>
+                        <button onclick="loadActivitiesDemo()" style="margin-top: 15px; padding: 8px 16px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>
+                    </div>
+                `;
+            }
+        }
+        
+        async function testApiConnection(token, resultsDiv) {
+            try {
+                console.log('🔧 Testing API connection...');
+                const response = await fetch(`https://api.trello.com/1/members/me?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}`);
+                
+                if (!response.ok) {
+                    throw new Error(`API call failed: ${response.status} ${response.statusText}`);
+                }
+                
+                const member = await response.json();
+                console.log('✅ API call successful, member:', member.fullName);
+                
+                // Show success
+                resultsDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #0079bf;">
+                        <div style="font-size: 32px; margin-bottom: 16px;">✅</div>
+                        <h3>Integration Working!</h3>
+                        <p>Connected as: <strong>${member.fullName}</strong></p>
+                        <p>Your Activity Tracker is successfully connected to Trello.</p>
+                        <p style="font-size: 14px; color: #5e6c84; margin-top: 20px;">Ready for full activity tracking implementation!</p>
+                    </div>
+                `;
+                
+            } catch (apiError) {
+                console.error('❌ API test failed:', apiError);
+                resultsDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #eb5a46;">
+                        <div style="font-size: 32px; margin-bottom: 16px;">❌</div>
+                        <h3>API Connection Failed</h3>
+                        <p>Connected to Trello but API test failed.</p>
+                        <p style="font-size: 14px; color: #5e6c84; margin-top: 10px;">Error: ${apiError.message}</p>
                         <button onclick="loadActivitiesDemo()" style="margin-top: 15px; padding: 8px 16px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>
                     </div>
                 `;
@@ -309,7 +376,7 @@
                                 dark: 'https://brett-pnc.github.io/Trello-Activity-Tracker/activity_tracker_icon_dark_theme.svg',
                                 light: 'https://brett-pnc.github.io/Trello-Activity-Tracker/activity_tracker_icon_light_theme.svg'
                             },
-                            text: 'My Activity Search',
+                            text: 'Activity Tracker',
                             callback: function(t) {
                                 console.log('🚀 Board button clicked');
                                 console.log('🚀 Opening modal...');
@@ -319,7 +386,7 @@
                                     accentColor: '#0079bf',
                                     height: 680,
                                     fullscreen: false,
-                                    title: 'My Activity Search'
+                                    title: 'Activity Tracker'
                                 }).then(function() {
                                     console.log('✅ Modal opened successfully');
                                 }).catch(function(error) {
@@ -336,7 +403,7 @@
                                 dark: 'https://brett-pnc.github.io/Trello-Activity-Tracker/activity_tracker_icon_dark_theme.svg',
                                 light: 'https://brett-pnc.github.io/Trello-Activity-Tracker/activity_tracker_icon_light_theme.svg'
                             },
-                            text: 'My Activity Search',
+                            text: 'Activity Tracker',
                             callback: function(t) {
                                 console.log('🚀 Card button clicked');
                                 return t.modal({
@@ -345,7 +412,7 @@
                                     accentColor: '#0079bf',
                                     height: 680,
                                     fullscreen: false,
-                                    title: 'My Activity Search'
+                                    title: 'Activity Tracker'
                                 });
                             }
                         }];
@@ -354,7 +421,7 @@
                     'show-settings': function(t, options) {
                         console.log('🎯 Show settings called');
                         return t.popup({
-                            title: 'My Activity Search Settings',
+                            title: 'Activity Tracker Settings',
                             url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?settings=true',
                             args: { source: 'settings' }
                         });
