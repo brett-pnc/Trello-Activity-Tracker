@@ -50,6 +50,85 @@
             border: 1px solid #dfe1e6;
         }
         
+        .activity-type-filter {
+            grid-column: 1 / -1;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #dfe1e6;
+        }
+        
+        .activity-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 8px;
+        }
+        
+        .activity-type-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #dfe1e6;
+            border-radius: 4px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .activity-type-item:hover {
+            border-color: #0079bf;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .activity-type-item.active {
+            border-color: #0079bf;
+            background: #e4f0f6;
+        }
+        
+        .activity-checkbox {
+            width: 16px;
+            height: 16px;
+            accent-color: #0079bf;
+        }
+        
+        .activity-type-label {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .activity-type-icon {
+            font-size: 16px;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .filter-btn {
+            padding: 6px 12px;
+            background: #f4f5f7;
+            color: #5e6c84;
+            border: 1px solid #dfe1e6;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover {
+            background: #e4f0f6;
+            border-color: #0079bf;
+            color: #0079bf;
+        }
+        
         .filter-group {
             display: flex;
             flex-direction: column;
@@ -214,6 +293,10 @@
             .stats {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            .activity-types {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -244,6 +327,18 @@
             <div class="filter-group">
                 <label class="filter-label"></label>
                 <button class="btn" id="loadActivities">Load Activities</button>
+            </div>
+            
+            <div class="activity-type-filter">
+                <div class="filter-label">Activity Types</div>
+                <div class="activity-types" id="activityTypes">
+                    <!-- Activity type checkboxes will be populated here -->
+                </div>
+                <div class="filter-controls">
+                    <button class="filter-btn" id="selectAll">Select All</button>
+                    <button class="filter-btn" id="selectNone">Select None</button>
+                    <button class="filter-btn" id="selectCommon">Common Only</button>
+                </div>
             </div>
         </div>
         
@@ -282,24 +377,36 @@
         let t = TrelloPowerUp.iframe();
         
         // Your Trello API Key - get this from https://trello.com/app-key
-        const TRELLO_API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
+        const TRELLO_API_KEY = 'caeeec29db6d299bd3b65e9743854d5d';
         
         // Activity type icons and colors
         const activityTypes = {
-            createCard: { icon: '📋', name: 'Card Created', class: 'type-card' },
-            updateCard: { icon: '✏️', name: 'Card Updated', class: 'type-card' },
-            commentCard: { icon: '💬', name: 'Comment Added', class: 'type-comment' },
-            addAttachmentToCard: { icon: '📎', name: 'Attachment Added', class: 'type-attachment' },
-            addChecklistToCard: { icon: '☑️', name: 'Checklist Added', class: 'type-checklist' },
-            addMemberToCard: { icon: '👤', name: 'Member Added', class: 'type-member' },
-            addLabelToCard: { icon: '🏷️', name: 'Label Added', class: 'type-label' },
-            moveCard: { icon: '↔️', name: 'Card Moved', class: 'type-card' },
-            deleteCard: { icon: '🗑️', name: 'Card Deleted', class: 'type-card' },
-            default: { icon: '⚡', name: 'Activity', class: 'type-other' }
+            createCard: { icon: '📋', name: 'Card Created', class: 'type-card', common: true },
+            updateCard: { icon: '✏️', name: 'Card Updated', class: 'type-card', common: true },
+            commentCard: { icon: '💬', name: 'Comment Added', class: 'type-comment', common: true },
+            addAttachmentToCard: { icon: '📎', name: 'Attachment Added', class: 'type-attachment', common: false },
+            addChecklistToCard: { icon: '☑️', name: 'Checklist Added', class: 'type-checklist', common: false },
+            addMemberToCard: { icon: '👤', name: 'Member Added', class: 'type-member', common: false },
+            addLabelToCard: { icon: '🏷️', name: 'Label Added', class: 'type-label', common: false },
+            moveCard: { icon: '↔️', name: 'Card Moved', class: 'type-card', common: true },
+            deleteCard: { icon: '🗑️', name: 'Card Deleted', class: 'type-card', common: false },
+            removeLabelFromCard: { icon: '🏷️', name: 'Label Removed', class: 'type-label', common: false },
+            removeMemberFromCard: { icon: '👤', name: 'Member Removed', class: 'type-member', common: false },
+            updateCheckItemStateOnCard: { icon: '✅', name: 'Checklist Item Updated', class: 'type-checklist', common: false },
+            createList: { icon: '📝', name: 'List Created', class: 'type-other', common: false },
+            updateList: { icon: '📝', name: 'List Updated', class: 'type-other', common: false },
+            moveListFromBoard: { icon: '📝', name: 'List Moved', class: 'type-other', common: false },
+            copyCard: { icon: '📄', name: 'Card Copied', class: 'type-card', common: false },
+            convertToCardFromCheckItem: { icon: '🔄', name: 'Checklist Item to Card', class: 'type-card', common: false },
+            addToOrganizationBoard: { icon: '🏢', name: 'Added to Organization', class: 'type-other', common: false },
+            removeFromOrganizationBoard: { icon: '🏢', name: 'Removed from Organization', class: 'type-other', common: false },
+            updateBoard: { icon: '📊', name: 'Board Updated', class: 'type-other', common: false },
+            default: { icon: '⚡', name: 'Other Activity', class: 'type-other', common: false }
         };
         
         let allBoards = [];
         let currentActivities = [];
+        let selectedActivityTypes = new Set();
         
         // Initialize the interface
         async function init() {
@@ -317,6 +424,9 @@
             
             // Load boards for filter
             await loadBoards();
+            
+            // Initialize activity type filters
+            initializeActivityTypeFilter();
             
             // Set up event listeners
             document.getElementById('loadActivities').addEventListener('click', loadActivities);
@@ -375,6 +485,106 @@
             }
         }
         
+        function initializeActivityTypeFilter() {
+            const activityTypesContainer = document.getElementById('activityTypes');
+            
+            // Create checkboxes for each activity type
+            Object.entries(activityTypes).forEach(([type, config]) => {
+                if (type === 'default') return; // Skip default type
+                
+                const item = document.createElement('div');
+                item.className = 'activity-type-item';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'activity-checkbox';
+                checkbox.id = `type-${type}`;
+                checkbox.checked = config.common; // Default to checked for common types
+                checkbox.addEventListener('change', () => {
+                    updateActivityTypeSelection();
+                    item.classList.toggle('active', checkbox.checked);
+                });
+                
+                const label = document.createElement('label');
+                label.htmlFor = `type-${type}`;
+                label.className = 'activity-type-label';
+                label.innerHTML = `
+                    <span class="activity-type-icon">${config.icon}</span>
+                    ${config.name}
+                `;
+                
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                activityTypesContainer.appendChild(item);
+                
+                // Set initial state
+                if (config.common) {
+                    selectedActivityTypes.add(type);
+                    item.classList.add('active');
+                }
+                
+                // Make the whole item clickable
+                item.addEventListener('click', (e) => {
+                    if (e.target !== checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                        checkbox.dispatchEvent(new Event('change'));
+                    }
+                });
+            });
+            
+            // Set up filter control buttons
+            document.getElementById('selectAll').addEventListener('click', () => {
+                document.querySelectorAll('.activity-checkbox').forEach(cb => {
+                    cb.checked = true;
+                    cb.dispatchEvent(new Event('change'));
+                });
+            });
+            
+            document.getElementById('selectNone').addEventListener('click', () => {
+                document.querySelectorAll('.activity-checkbox').forEach(cb => {
+                    cb.checked = false;
+                    cb.dispatchEvent(new Event('change'));
+                });
+            });
+            
+            document.getElementById('selectCommon').addEventListener('click', () => {
+                document.querySelectorAll('.activity-checkbox').forEach(cb => {
+                    const type = cb.id.replace('type-', '');
+                    const shouldCheck = activityTypes[type]?.common || false;
+                    cb.checked = shouldCheck;
+                    cb.dispatchEvent(new Event('change'));
+                });
+            });
+        }
+        
+        function updateActivityTypeSelection() {
+            selectedActivityTypes.clear();
+            document.querySelectorAll('.activity-checkbox:checked').forEach(cb => {
+                const type = cb.id.replace('type-', '');
+                selectedActivityTypes.add(type);
+            });
+            
+            // If activities are already loaded, filter them
+            if (currentActivities.length > 0) {
+                filterAndDisplayActivities();
+            }
+        }
+        
+        function filterAndDisplayActivities() {
+            if (selectedActivityTypes.size === 0) {
+                displayActivities([]);
+                updateStats([]);
+                return;
+            }
+            
+            const filteredActivities = currentActivities.filter(activity => {
+                return selectedActivityTypes.has(activity.type);
+            });
+            
+            displayActivities(filteredActivities);
+            updateStats(filteredActivities);
+        }
+
         async function loadActivities() {
             const loadBtn = document.getElementById('loadActivities');
             const activityList = document.getElementById('activityList');
@@ -423,8 +633,7 @@
                 activities.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
                 currentActivities = activities;
-                displayActivities(activities);
-                updateStats(activities);
+                filterAndDisplayActivities(); // Use the new filter function instead of displayActivities
                 
             } catch (error) {
                 console.error('Error loading activities:', error);
@@ -548,13 +757,30 @@
         // Trello Power-Up configuration
         window.TrelloPowerUp.initialize({
             'board-buttons': function(t, opts) {
+                console.log('Board buttons capability called');
+                return [{
+                    icon: {
+                        dark: 'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-white.svg',
+                        light: 'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-black.svg'
+                    },
+                    text: 'Activity Tracker',
+                    callback: function(t) {
+                        console.log('Activity Tracker button clicked');
+                        return t.overlay({
+                            url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/',
+                            args: { source: 'board-button' }
+                        });
+                    }
+                }];
+            },
+            'card-buttons': function(t, opts) {
                 return [{
                     icon: '📊',
                     text: 'Activity Tracker',
                     callback: function(t) {
                         return t.overlay({
-                            url: window.location.href,
-                            args: { source: 'board-button' }
+                            url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/',
+                            args: { source: 'card-button' }
                         });
                     }
                 }];
@@ -562,11 +788,15 @@
             'show-settings': function(t, options) {
                 return t.popup({
                     title: 'Activity Tracker Settings', 
-                    url: window.location.href + '?settings=true',
-                    height: 300
+                    url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/',
+                    height: 400
                 });
             }
         });
+        
+        // Additional debug logging
+        console.log('Trello Power-Up initialized:', window.TrelloPowerUp);
+        console.log('Current URL:', window.location.href);
     </script>
 </body>
 </html>
