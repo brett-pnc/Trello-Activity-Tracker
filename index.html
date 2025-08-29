@@ -408,15 +408,21 @@
         let currentActivities = [];
         let selectedActivityTypes = new Set();
         
-        // Initialize the main interface only if not in Power-Up context
-        async function init() {
-            // Don't initialize the main UI if we're being loaded as a Power-Up
+        // Main application code - only runs when accessed directly
+        (function() {
+            'use strict';
+            
+            // Don't run main app if we're in Power-Up context
             if (window.parent !== window) {
-                console.log('Running in iframe context, skipping main UI initialization');
+                console.log('🔧 In Power-Up iframe context - skipping main app initialization');
                 return;
             }
             
-            console.log('Initializing main UI...');
+            // Your Trello API Key
+            const TRELLO_API_KEY = 'caeeec29db6d299bd3b65e9743854d5d';
+            
+            // Initialize the interface
+            async function init() {
             // Set default dates (last 7 days)
             const endDate = new Date();
             const startDate = new Date();
@@ -758,16 +764,14 @@
             return date.toLocaleDateString();
         }
         
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, checking context...');
-            if (window.parent !== window) {
-                console.log('In Power-Up iframe context - Power-Up should be initialized');
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
             } else {
-                console.log('Direct page access - initializing main interface');
                 init();
             }
-        });
+            
+        })();
         
     </script>
 </body>
