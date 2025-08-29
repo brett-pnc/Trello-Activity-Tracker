@@ -205,29 +205,55 @@
             
             try {
                 if (window.TrelloPowerUp) {
+                    console.log('🔧 Getting Trello context...');
                     const t = window.TrelloPowerUp.iframe();
-                    const token = await t.getRestApi().getToken();
-                    console.log('✅ Got Trello token, can load activities');
                     
-                    // Simulate loading
-                    setTimeout(() => {
-                        resultsDiv.innerHTML = `
-                            <div style="text-align: center; padding: 40px; color: #0079bf;">
-                                <div style="font-size: 32px; margin-bottom: 16px;">✅</div>
-                                <h3>Integration Working!</h3>
-                                <p>Your Activity Tracker overlay is successfully connected to Trello.</p>
-                                <p style="font-size: 14px; color: #5e6c84; margin-top: 20px;">Ready for full implementation!</p>
-                            </div>
-                        `;
-                    }, 2000);
+                    console.log('🔧 Requesting Trello token...');
+                    // Use the newer token API
+                    const token = await t.getRestApi().getToken({
+                        scope: {
+                            read: true,
+                            write: false,
+                            account: false
+                        }
+                    });
+                    
+                    console.log('✅ Got Trello token successfully');
+                    
+                    // Test API call to verify token works
+                    const response = await fetch(`https://api.trello.com/1/members/me?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}`);
+                    
+                    if (response.ok) {
+                        const member = await response.json();
+                        console.log('✅ API call successful, member:', member.fullName);
+                        
+                        // Show success
+                        setTimeout(() => {
+                            resultsDiv.innerHTML = `
+                                <div style="text-align: center; padding: 40px; color: #0079bf;">
+                                    <div style="font-size: 32px; margin-bottom: 16px;">✅</div>
+                                    <h3>Integration Working!</h3>
+                                    <p>Connected as: <strong>${member.fullName}</strong></p>
+                                    <p>Your Activity Tracker is successfully connected to Trello.</p>
+                                    <p style="font-size: 14px; color: #5e6c84; margin-top: 20px;">Ready for full activity tracking implementation!</p>
+                                </div>
+                            `;
+                        }, 1000);
+                    } else {
+                        throw new Error(`API call failed: ${response.status}`);
+                    }
                 }
             } catch (error) {
                 console.error('Error loading activities:', error);
+                console.error('Error details:', error.message);
+                
                 resultsDiv.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #eb5a46;">
                         <div style="font-size: 32px; margin-bottom: 16px;">⚠️</div>
-                        <h3>Error Loading Activities</h3>
-                        <p>There was an issue connecting to Trello. Please try again.</p>
+                        <h3>Connection Issue</h3>
+                        <p>Unable to connect to Trello API.</p>
+                        <p style="font-size: 14px; color: #5e6c84; margin-top: 10px;">Error: ${error.message || 'Unknown error'}</p>
+                        <button onclick="loadActivitiesDemo()" style="margin-top: 15px; padding: 8px 16px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>
                     </div>
                 `;
             }
