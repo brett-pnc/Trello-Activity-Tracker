@@ -178,7 +178,10 @@
                 closeBtn.addEventListener('click', function() {
                     console.log('🔧 Closing modal...');
                     if (window.TrelloPowerUp) {
-                        const t = window.TrelloPowerUp.iframe();
+                        const t = window.TrelloPowerUp.iframe({
+                            appKey: 'caeeec29db6d299bd3b65e9743854d5d',
+                            appName: 'My Activity Tracker'
+                        });
                         t.closeModal();
                     }
                 });
@@ -206,7 +209,10 @@
             try {
                 if (window.TrelloPowerUp) {
                     console.log('🔧 Getting Trello context...');
-                    const t = window.TrelloPowerUp.iframe();
+                    const t = window.TrelloPowerUp.iframe({
+                        appKey: 'caeeec29db6d299bd3b65e9743854d5d',
+                        appName: 'My Activity Tracker'
+                    });
                     
                     console.log('🔧 Requesting Trello token...');
                     // Use the newer token API
@@ -296,7 +302,7 @@
                                 dark: 'https://brett-pnc.github.io/Trello-Activity-Tracker/activity_tracker_icon_dark_theme.svg',
                                 light: 'https://brett-pnc.github.io/Trello-Activity-Tracker/activity_tracker_icon_light_theme.svg'
                             },
-                            text: 'Activity Tracker',
+                            text: 'My Activity Tracker',
                             callback: function(t) {
                                 console.log('🚀 Board button clicked');
                                 console.log('🚀 Opening modal...');
@@ -306,7 +312,7 @@
                                     accentColor: '#0079bf',
                                     height: 680,
                                     fullscreen: false,
-                                    title: 'Activity Tracker'
+                                    title: 'My Activity Tracker'
                                 }).then(function() {
                                     console.log('✅ Modal opened successfully');
                                 }).catch(function(error) {
@@ -323,7 +329,7 @@
                                 dark: 'https://brett-pnc.github.io/Trello-Activity-Tracker/activity_tracker_icon_dark_theme.svg',
                                 light: 'https://brett-pnc.github.io/Trello-Activity-Tracker/activity_tracker_icon_light_theme.svg'
                             },
-                            text: 'Activity Tracker',
+                            text: 'My Activity Tracker',
                             callback: function(t) {
                                 console.log('🚀 Card button clicked');
                                 return t.modal({
@@ -332,7 +338,7 @@
                                     accentColor: '#0079bf',
                                     height: 680,
                                     fullscreen: false,
-                                    title: 'Activity Tracker'
+                                    title: 'My Activity Tracker'
                                 });
                             }
                         }];
@@ -341,7 +347,7 @@
                     'show-settings': function(t, options) {
                         console.log('🎯 Show settings called');
                         return t.popup({
-                            title: 'Activity Tracker Settings',
+                            title: 'My Activity Tracker Settings',
                             url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?settings=true',
                             args: { source: 'settings' }
                         });
