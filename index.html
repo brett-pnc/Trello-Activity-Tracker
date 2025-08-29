@@ -246,33 +246,28 @@
             console.log('🔧 Loading overlay mode...');
             
             document.body.innerHTML = `
-                <div style="padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto;">
+                <div style="padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; width: 100%; max-width: 680px; margin: 0 auto;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #dfe1e6; padding-bottom: 15px;">
                         <h2 style="margin: 0; color: #172b4d;">📊 Activity Tracker</h2>
-                        <button id="closeOverlay" style="background: #f4f5f7; border: 1px solid #dfe1e6; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px;">Close</button>
+                        <button id="loadActivities" style="padding: 10px 20px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">Load Activities</button>
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 2fr 1fr; gap: 16px; margin-bottom: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
                         <div style="display: flex; flex-direction: column;">
                             <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Start Date</label>
-                            <input type="date" id="startDate" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white;" />
+                            <input type="date" id="startDate" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;" />
                         </div>
                         
                         <div style="display: flex; flex-direction: column;">
                             <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">End Date</label>
-                            <input type="date" id="endDate" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white;" />
+                            <input type="date" id="endDate" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;" />
                         </div>
                         
                         <div style="display: flex; flex-direction: column;">
                             <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Board Filter</label>
-                            <select id="boardFilter" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white;">
+                            <select id="boardFilter" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;">
                                 <option value="">All Boards</option>
                             </select>
-                        </div>
-                        
-                        <div style="display: flex; flex-direction: column;">
-                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;"></label>
-                            <button id="loadActivities" style="padding: 10px 20px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; align-self: end;">Load Activities</button>
                         </div>
                     </div>
                     
@@ -357,22 +352,9 @@
                 endInput.addEventListener('change', validateDates);
             }
             
-            // Close button
-            const closeBtn = document.getElementById('closeOverlay');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', function() {
-                    console.log('🔧 Closing modal...');
-                    if (window.TrelloPowerUp) {
-                        const t = window.TrelloPowerUp.iframe({
-                            appKey: 'caeeec29db6d299bd3b65e9743854d5d',
-                            appName: 'My Activity Search'
-                        });
-                        t.closeModal();
-                    }
-                });
-            }
+            // Close button - removed since we moved Load Activities to header
             
-            // Load activities button
+            // Load activities button (now in header)
             const loadBtn = document.getElementById('loadActivities');
             if (loadBtn) {
                 loadBtn.addEventListener('click', loadRealActivities);
@@ -474,6 +456,7 @@
             const selectedBoardId = document.getElementById('boardFilter').value;
             
             console.log('📅 Date range:', startDate, 'to', endDate);
+            console.log('📋 Selected board ID:', selectedBoardId || 'All boards');
             
             resultsDiv.innerHTML = `
                 <div style="text-align: center; padding: 40px; color: #5e6c84;">
@@ -494,24 +477,62 @@
                 allBoards.filter(board => board.id === selectedBoardId) : 
                 allBoards;
             
-            console.log('📋 Querying', boardsToQuery.length, 'boards');
+            console.log('📋 Querying', boardsToQuery.length, 'boards:', boardsToQuery.map(b => b.name));
             
             let allActivities = [];
             
             // Fetch activities from each board
             for (const board of boardsToQuery) {
                 try {
-                    console.log(`📋 Loading activities from: ${board.name}`);
+                    console.log(`📋 Loading activities from: ${board.name} (${board.id})`);
                     
-                    const url = `https://api.trello.com/1/boards/${board.id}/actions` +
-                        `?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}` +
-                        `&since=${startDate}&before=${new Date(endDate + 'T23:59:59Z').toISOString()}` +
-                        `&limit=1000&member=me`;
+                    // Create date objects for proper formatting
+                    const startDateTime = new Date(startDate + 'T00:00:00Z').toISOString();
+                    const endDateTime = new Date(endDate + 'T23:59:59Z').toISOString();
                     
-                    const response = await fetch(url);
-                    if (response.ok) {
-                        const boardActivities = await response.json();
-                        console.log(`✅ Loaded ${boardActivities.length} activities from ${board.name}`);
+                    console.log(`📅 API date range: ${startDateTime} to ${endDateTime}`);
+                    
+                    // Try different API approaches
+                    const urls = [
+                        // Approach 1: Board actions with member filter
+                        `https://api.trello.com/1/boards/${board.id}/actions?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&since=${startDateTime}&before=${endDateTime}&limit=1000&member=me`,
+                        
+                        // Approach 2: Board actions without member filter (if no results from first)
+                        `https://api.trello.com/1/boards/${board.id}/actions?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&since=${startDateTime}&before=${endDateTime}&limit=1000`
+                    ];
+                    
+                    let boardActivities = [];
+                    
+                    for (let i = 0; i < urls.length; i++) {
+                        const url = urls[i];
+                        console.log(`🔗 Trying URL ${i + 1}:`, url);
+                        
+                        const response = await fetch(url);
+                        console.log(`📡 Response status:`, response.status);
+                        
+                        if (response.ok) {
+                            boardActivities = await response.json();
+                            console.log(`📊 Raw response length:`, boardActivities.length);
+                            
+                            if (boardActivities.length > 0) {
+                                console.log(`✅ Found ${boardActivities.length} activities with approach ${i + 1}`);
+                                break; // Success, stop trying other approaches
+                            } else {
+                                console.log(`⚠️ No activities found with approach ${i + 1}, trying next...`);
+                            }
+                        } else {
+                            const errorText = await response.text();
+                            console.warn(`❌ API error with approach ${i + 1}:`, response.status, errorText);
+                        }
+                    }
+                    
+                    if (boardActivities.length > 0) {
+                        console.log(`✅ Final result: ${boardActivities.length} activities from ${board.name}`);
+                        console.log(`📋 Sample activities:`, boardActivities.slice(0, 3).map(a => ({
+                            type: a.type,
+                            date: a.date,
+                            memberCreator: a.memberCreator?.fullName
+                        })));
                         
                         // Add board info to each activity
                         const enrichedActivities = boardActivities.map(activity => ({
@@ -522,8 +543,21 @@
                         
                         allActivities = allActivities.concat(enrichedActivities);
                     } else {
-                        console.warn(`⚠️ Failed to load activities from ${board.name}: ${response.status}`);
+                        console.log(`⚠️ No activities found for ${board.name} in date range`);
+                        
+                        // Try a broader search to see if there are ANY activities on this board
+                        const testUrl = `https://api.trello.com/1/boards/${board.id}/actions?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&limit=10`;
+                        const testResponse = await fetch(testUrl);
+                        if (testResponse.ok) {
+                            const testActivities = await testResponse.json();
+                            console.log(`🔍 Test: Board has ${testActivities.length} total recent activities`);
+                            if (testActivities.length > 0) {
+                                console.log(`📅 Latest activity date:`, testActivities[0].date);
+                                console.log(`👤 Latest activity by:`, testActivities[0].memberCreator?.fullName);
+                            }
+                        }
                     }
+                    
                 } catch (error) {
                     console.error(`❌ Error loading activities from ${board.name}:`, error);
                 }
@@ -532,9 +566,41 @@
             // Sort activities by date (newest first)
             allActivities.sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            console.log(`✅ Loaded total of ${allActivities.length} activities`);
+            console.log(`🎉 FINAL RESULT: ${allActivities.length} total activities loaded`);
+            
+            if (allActivities.length > 0) {
+                console.log(`📊 Activity types found:`, [...new Set(allActivities.map(a => a.type))]);
+                console.log(`📅 Date range of activities:`, {
+                    oldest: allActivities[allActivities.length - 1]?.date,
+                    newest: allActivities[0]?.date
+                });
+            }
             
             currentActivities = allActivities;
+            
+            if (allActivities.length === 0) {
+                // Show helpful message if no activities found
+                resultsDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #5e6c84; background: white; border-radius: 8px; border: 1px solid #dfe1e6;">
+                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">🔍</div>
+                        <h3>No Activities Found</h3>
+                        <p>No activities were found for the selected date range (${startDate} to ${endDate}).</p>
+                        <p style="font-size: 14px; color: #5e6c84; margin-top: 16px;">
+                            Try:<br>
+                            • Expanding the date range<br>
+                            • Selecting "All Boards" instead of a specific board<br>
+                            • Checking if you were active on these boards during this period
+                        </p>
+                        <div style="margin-top: 20px;">
+                            <strong>Debug info:</strong><br>
+                            <span style="font-size: 12px; color: #5e6c84;">
+                                Searched ${boardsToQuery.length} boards: ${boardsToQuery.map(b => b.name).join(', ')}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
             
             // Show activity type filter and display activities
             showActivityTypeFilter(resultsDiv);
@@ -570,18 +636,18 @@
         
         function showActivityTypeFilter(container) {
             const filterHtml = `
-                <div style="margin-bottom: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
-                    <h4 style="margin: 0 0 16px 0; color: #172b4d;">Filter by Activity Type</h4>
-                    <div id="activityTypeFilters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px;">
+                <div style="margin-bottom: 20px; padding: 16px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
+                    <h4 style="margin: 0 0 12px 0; color: #172b4d; font-size: 16px;">Filter by Activity Type</h4>
+                    <div id="activityTypeFilters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-bottom: 12px;">
                         <!-- Activity type checkboxes will be inserted here -->
                     </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button id="selectAllTypes" style="padding: 6px 12px; background: #f4f5f7; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Select All</button>
-                        <button id="selectNoneTypes" style="padding: 6px 12px; background: #f4f5f7; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Select None</button>
-                        <button id="selectCommonTypes" style="padding: 6px 12px; background: #f4f5f7; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Common Only</button>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                        <button id="selectAllTypes" style="padding: 4px 8px; background: #f4f5f7; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 11px;">All</button>
+                        <button id="selectNoneTypes" style="padding: 4px 8px; background: #f4f5f7; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 11px;">None</button>
+                        <button id="selectCommonTypes" style="padding: 4px 8px; background: #f4f5f7; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 11px;">Common</button>
                     </div>
                 </div>
-                <div id="activityStats" style="margin-bottom: 24px;">
+                <div id="activityStats" style="margin-bottom: 20px;">
                     <!-- Stats will be inserted here -->
                 </div>
                 <div id="activitiesList">
@@ -604,12 +670,12 @@
                     const activityCount = currentActivities.filter(a => a.type === type).length;
                     
                     const checkboxHtml = `
-                        <div class="activity-type-item" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: ${isSelected ? '#e4f0f6' : 'white'}; border: 1px solid ${isSelected ? '#0079bf' : '#dfe1e6'}; border-radius: 4px; cursor: pointer;">
-                            <input type="checkbox" id="type-${type}" ${isSelected ? 'checked' : ''} style="width: 16px; height: 16px; accent-color: #0079bf;">
-                            <label for="type-${type}" style="flex: 1; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                                <span style="font-size: 16px;">${config.icon}</span>
-                                ${config.name}
-                                <span style="font-size: 12px; color: #5e6c84; margin-left: auto;">(${activityCount})</span>
+                        <div class="activity-type-item" style="display: flex; align-items: center; gap: 6px; padding: 6px 8px; background: ${isSelected ? '#e4f0f6' : 'white'}; border: 1px solid ${isSelected ? '#0079bf' : '#dfe1e6'}; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                            <input type="checkbox" id="type-${type}" ${isSelected ? 'checked' : ''} style="width: 14px; height: 14px; accent-color: #0079bf; margin: 0;">
+                            <label for="type-${type}" style="flex: 1; cursor: pointer; display: flex; align-items: center; gap: 4px; margin: 0;">
+                                <span style="font-size: 14px;">${config.icon}</span>
+                                <span style="font-size: 11px; line-height: 1.2;">${config.name}</span>
+                                <span style="font-size: 10px; color: #5e6c84; margin-left: auto;">(${activityCount})</span>
                             </label>
                         </div>
                     `;
@@ -710,22 +776,22 @@
             const uniqueBoards = new Set(activities.map(a => a.boardId)).size;
             
             statsContainer.innerHTML = `
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
-                    <div style="background: linear-gradient(135deg, #0079bf, #005a8b); color: white; padding: 16px; border-radius: 8px; text-align: center;">
-                        <span style="font-size: 28px; font-weight: bold; display: block;">${totalActivities}</span>
-                        <span style="font-size: 12px; opacity: 0.9; text-transform: uppercase;">Total Activities</span>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                    <div style="background: linear-gradient(135deg, #0079bf, #005a8b); color: white; padding: 12px; border-radius: 6px; text-align: center;">
+                        <span style="font-size: 22px; font-weight: bold; display: block;">${totalActivities}</span>
+                        <span style="font-size: 10px; opacity: 0.9; text-transform: uppercase;">Total</span>
                     </div>
-                    <div style="background: linear-gradient(135deg, #61bd4f, #4d9c3d); color: white; padding: 16px; border-radius: 8px; text-align: center;">
-                        <span style="font-size: 28px; font-weight: bold; display: block;">${cardActivities}</span>
-                        <span style="font-size: 12px; opacity: 0.9; text-transform: uppercase;">Card Actions</span>
+                    <div style="background: linear-gradient(135deg, #61bd4f, #4d9c3d); color: white; padding: 12px; border-radius: 6px; text-align: center;">
+                        <span style="font-size: 22px; font-weight: bold; display: block;">${cardActivities}</span>
+                        <span style="font-size: 10px; opacity: 0.9; text-transform: uppercase;">Cards</span>
                     </div>
-                    <div style="background: linear-gradient(135deg, #f2d600, #d4b900); color: white; padding: 16px; border-radius: 8px; text-align: center;">
-                        <span style="font-size: 28px; font-weight: bold; display: block;">${commentActivities}</span>
-                        <span style="font-size: 12px; opacity: 0.9; text-transform: uppercase;">Comments</span>
+                    <div style="background: linear-gradient(135deg, #f2d600, #d4b900); color: white; padding: 12px; border-radius: 6px; text-align: center;">
+                        <span style="font-size: 22px; font-weight: bold; display: block;">${commentActivities}</span>
+                        <span style="font-size: 10px; opacity: 0.9; text-transform: uppercase;">Comments</span>
                     </div>
-                    <div style="background: linear-gradient(135deg, #c377e0, #9c5db8); color: white; padding: 16px; border-radius: 8px; text-align: center;">
-                        <span style="font-size: 28px; font-weight: bold; display: block;">${uniqueBoards}</span>
-                        <span style="font-size: 12px; opacity: 0.9; text-transform: uppercase;">Boards</span>
+                    <div style="background: linear-gradient(135deg, #c377e0, #9c5db8); color: white; padding: 12px; border-radius: 6px; text-align: center;">
+                        <span style="font-size: 22px; font-weight: bold; display: block;">${uniqueBoards}</span>
+                        <span style="font-size: 10px; opacity: 0.9; text-transform: uppercase;">Boards</span>
                     </div>
                 </div>
             `;
