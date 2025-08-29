@@ -373,397 +373,120 @@
     </div>
 
     <script>
-        // Trello Power-Up initialization
-        let t = TrelloPowerUp.iframe();
+        // POWER-UP INITIALIZATION - This must run first and fast
+        console.log('🚀 Starting Power-Up initialization...');
         
-        // Your Trello API Key - get this from https://trello.com/app-key
-        const TRELLO_API_KEY = 'caeeec29db6d299bd3b65e9743854d5d';
+        // Immediately initialize the Power-Up if TrelloPowerUp is available
+        if (typeof window.TrelloPowerUp !== 'undefined') {
+            console.log('✅ TrelloPowerUp available, initializing immediately');
+            initializePowerUp();
+        } else {
+            console.log('⏳ TrelloPowerUp not ready, waiting...');
+            // Try multiple times quickly
+            let attempts = 0;
+            const maxAttempts = 50;
+            const checkInterval = setInterval(() => {
+                attempts++;
+                if (typeof window.TrelloPowerUp !== 'undefined') {
+                    console.log('✅ TrelloPowerUp ready after', attempts, 'attempts');
+                    clearInterval(checkInterval);
+                    initializePowerUp();
+                } else if (attempts >= maxAttempts) {
+                    console.error('❌ TrelloPowerUp failed to load after', maxAttempts, 'attempts');
+                    clearInterval(checkInterval);
+                }
+            }, 100);
+        }
         
-        // Activity type icons and colors
-        const activityTypes = {
-            createCard: { icon: '📋', name: 'Card Created', class: 'type-card', common: true },
-            updateCard: { icon: '✏️', name: 'Card Updated', class: 'type-card', common: true },
-            commentCard: { icon: '💬', name: 'Comment Added', class: 'type-comment', common: true },
-            addAttachmentToCard: { icon: '📎', name: 'Attachment Added', class: 'type-attachment', common: false },
-            addChecklistToCard: { icon: '☑️', name: 'Checklist Added', class: 'type-checklist', common: false },
-            addMemberToCard: { icon: '👤', name: 'Member Added', class: 'type-member', common: false },
-            addLabelToCard: { icon: '🏷️', name: 'Label Added', class: 'type-label', common: false },
-            moveCard: { icon: '↔️', name: 'Card Moved', class: 'type-card', common: true },
-            deleteCard: { icon: '🗑️', name: 'Card Deleted', class: 'type-card', common: false },
-            removeLabelFromCard: { icon: '🏷️', name: 'Label Removed', class: 'type-label', common: false },
-            removeMemberFromCard: { icon: '👤', name: 'Member Removed', class: 'type-member', common: false },
-            updateCheckItemStateOnCard: { icon: '✅', name: 'Checklist Item Updated', class: 'type-checklist', common: false },
-            createList: { icon: '📝', name: 'List Created', class: 'type-other', common: false },
-            updateList: { icon: '📝', name: 'List Updated', class: 'type-other', common: false },
-            moveListFromBoard: { icon: '📝', name: 'List Moved', class: 'type-other', common: false },
-            copyCard: { icon: '📄', name: 'Card Copied', class: 'type-card', common: false },
-            convertToCardFromCheckItem: { icon: '🔄', name: 'Checklist Item to Card', class: 'type-card', common: false },
-            addToOrganizationBoard: { icon: '🏢', name: 'Added to Organization', class: 'type-other', common: false },
-            removeFromOrganizationBoard: { icon: '🏢', name: 'Removed from Organization', class: 'type-other', common: false },
-            updateBoard: { icon: '📊', name: 'Board Updated', class: 'type-other', common: false },
-            default: { icon: '⚡', name: 'Other Activity', class: 'type-other', common: false }
-        };
-        
-        let allBoards = [];
-        let currentActivities = [];
-        let selectedActivityTypes = new Set();
-        
-        // Main application code - only runs when accessed directly
-        (function() {
-            'use strict';
-            
-            // Don't run main app if we're in Power-Up context
-            if (window.parent !== window) {
-                console.log('🔧 In Power-Up iframe context - skipping main app initialization');
-                return;
+        function initializePowerUp() {
+            try {
+                console.log('🔧 Initializing Power-Up capabilities...');
+                
+                window.TrelloPowerUp.initialize({
+                    'board-buttons': function(t, opts) {
+                        console.log('🎯 Board buttons capability called');
+                        return [{
+                            icon: '📊',
+                            text: 'Activity Tracker',
+                            callback: function(t) {
+                                console.log('🚀 Board button clicked');
+                                return t.overlay({
+                                    url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/'
+                                });
+                            }
+                        }];
+                    },
+                    
+                    'card-buttons': function(t, opts) {
+                        console.log('🎯 Card buttons capability called');
+                        return [{
+                            icon: '📊',
+                            text: 'Activity Tracker',
+                            callback: function(t) {
+                                console.log('🚀 Card button clicked');
+                                return t.overlay({
+                                    url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/'
+                                });
+                            }
+                        }];
+                    },
+                    
+                    'show-settings': function(t, options) {
+                        console.log('🎯 Show settings called');
+                        return t.popup({
+                            title: 'Activity Tracker Settings',
+                            url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/?settings=true'
+                        });
+                    }
+                });
+                
+                console.log('✅ Power-Up initialized successfully!');
+                
+            } catch (error) {
+                console.error('❌ Power-Up initialization error:', error);
             }
-            
-            // Your Trello API Key
+        }
+        
+        // MAIN APPLICATION CODE - Only runs for direct access
+        if (window.parent === window) {
+            console.log('🔧 Direct access detected, initializing main application...');
+            initializeMainApp();
+        } else {
+            console.log('🔧 Running in iframe context, Power-Up mode');
+        }
+        
+        function initializeMainApp() {
             const TRELLO_API_KEY = 'caeeec29db6d299bd3b65e9743854d5d';
             
-            // Initialize the interface
-            async function init() {
-            // Set default dates (last 7 days)
-            const endDate = new Date();
-            const startDate = new Date();
-            startDate.setDate(endDate.getDate() - 7);
+            // Activity type configuration
+            const activityTypes = {
+                createCard: { icon: '📋', name: 'Card Created', class: 'type-card', common: true },
+                updateCard: { icon: '✏️', name: 'Card Updated', class: 'type-card', common: true },
+                commentCard: { icon: '💬', name: 'Comment Added', class: 'type-comment', common: true },
+                addAttachmentToCard: { icon: '📎', name: 'Attachment Added', class: 'type-attachment', common: false },
+                addChecklistToCard: { icon: '☑️', name: 'Checklist Added', class: 'type-checklist', common: false },
+                addMemberToCard: { icon: '👤', name: 'Member Added', class: 'type-member', common: false },
+                addLabelToCard: { icon: '🏷️', name: 'Label Added', class: 'type-label', common: false },
+                moveCard: { icon: '↔️', name: 'Card Moved', class: 'type-card', common: true },
+                deleteCard: { icon: '🗑️', name: 'Card Deleted', class: 'type-card', common: false },
+                removeLabelFromCard: { icon: '🏷️', name: 'Label Removed', class: 'type-label', common: false },
+                removeMemberFromCard: { icon: '👤', name: 'Member Removed', class: 'type-member', common: false },
+                updateCheckItemStateOnCard: { icon: '✅', name: 'Checklist Item Updated', class: 'type-checklist', common: false },
+                createList: { icon: '📝', name: 'List Created', class: 'type-other', common: false },
+                updateList: { icon: '📝', name: 'List Updated', class: 'type-other', common: false },
+                moveListFromBoard: { icon: '📝', name: 'List Moved', class: 'type-other', common: false },
+                copyCard: { icon: '📄', name: 'Card Copied', class: 'type-card', common: false },
+                convertToCardFromCheckItem: { icon: '🔄', name: 'Checklist Item to Card', class: 'type-card', common: false },
+                addToOrganizationBoard: { icon: '🏢', name: 'Added to Organization', class: 'type-other', common: false },
+                removeFromOrganizationBoard: { icon: '🏢', name: 'Removed from Organization', class: 'type-other', common: false },
+                updateBoard: { icon: '📊', name: 'Board Updated', class: 'type-other', common: false },
+                default: { icon: '⚡', name: 'Other Activity', class: 'type-other', common: false }
+            };
             
-            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
-            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+            let allBoards = [];
+            let currentActivities = [];
+            let selectedActivityTypes = new Set();
             
-            // Validate date range on change
-            document.getElementById('startDate').addEventListener('change', validateDateRange);
-            document.getElementById('endDate').addEventListener('change', validateDateRange);
-            
-            // Load boards for filter
-            await loadBoards();
-            
-            // Initialize activity type filters
-            initializeActivityTypeFilter();
-            
-            // Set up event listeners
-            document.getElementById('loadActivities').addEventListener('click', loadActivities);
-            
-            // Load initial activities
-            await loadActivities();
-        }
-        
-        function validateDateRange() {
-            const startDate = new Date(document.getElementById('startDate').value);
-            const endDate = new Date(document.getElementById('endDate').value);
-            const daysDiff = (endDate - startDate) / (1000 * 60 * 60 * 24);
-            
-            if (daysDiff > 31) {
-                alert('Date range cannot exceed 31 days');
-                const newEndDate = new Date(startDate);
-                newEndDate.setDate(startDate.getDate() + 31);
-                document.getElementById('endDate').value = newEndDate.toISOString().split('T')[0];
-            }
-            
-            if (startDate > endDate) {
-                document.getElementById('endDate').value = document.getElementById('startDate').value;
-            }
-        }
-        
-        async function loadBoards() {
-            try {
-                // Get member token for API calls
-                const token = await t.getRestApi().getToken();
-                const member = await t.member('me');
-                
-                // Fetch user's boards
-                const response = await fetch(`https://api.trello.com/1/members/me/boards?key=${TRELLO_API_KEY}&token=${token}&filter=open`);
-                allBoards = await response.json();
-                
-                const boardFilter = document.getElementById('boardFilter');
-                boardFilter.innerHTML = '<option value="">All Boards</option>';
-                
-                allBoards.forEach(board => {
-                    const option = document.createElement('option');
-                    option.value = board.id;
-                    option.textContent = board.name;
-                    boardFilter.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error loading boards:', error);
-                // Fallback: add current board only
-                const board = await t.board('all');
-                if (board) {
-                    allBoards = [board];
-                    const option = document.createElement('option');
-                    option.value = board.id;
-                    option.textContent = board.name;
-                    document.getElementById('boardFilter').appendChild(option);
-                }
-            }
-        }
-        
-        function initializeActivityTypeFilter() {
-            const activityTypesContainer = document.getElementById('activityTypes');
-            
-            // Create checkboxes for each activity type
-            Object.entries(activityTypes).forEach(([type, config]) => {
-                if (type === 'default') return; // Skip default type
-                
-                const item = document.createElement('div');
-                item.className = 'activity-type-item';
-                
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.className = 'activity-checkbox';
-                checkbox.id = `type-${type}`;
-                checkbox.checked = config.common; // Default to checked for common types
-                checkbox.addEventListener('change', () => {
-                    updateActivityTypeSelection();
-                    item.classList.toggle('active', checkbox.checked);
-                });
-                
-                const label = document.createElement('label');
-                label.htmlFor = `type-${type}`;
-                label.className = 'activity-type-label';
-                label.innerHTML = `
-                    <span class="activity-type-icon">${config.icon}</span>
-                    ${config.name}
-                `;
-                
-                item.appendChild(checkbox);
-                item.appendChild(label);
-                activityTypesContainer.appendChild(item);
-                
-                // Set initial state
-                if (config.common) {
-                    selectedActivityTypes.add(type);
-                    item.classList.add('active');
-                }
-                
-                // Make the whole item clickable
-                item.addEventListener('click', (e) => {
-                    if (e.target !== checkbox) {
-                        checkbox.checked = !checkbox.checked;
-                        checkbox.dispatchEvent(new Event('change'));
-                    }
-                });
-            });
-            
-            // Set up filter control buttons
-            document.getElementById('selectAll').addEventListener('click', () => {
-                document.querySelectorAll('.activity-checkbox').forEach(cb => {
-                    cb.checked = true;
-                    cb.dispatchEvent(new Event('change'));
-                });
-            });
-            
-            document.getElementById('selectNone').addEventListener('click', () => {
-                document.querySelectorAll('.activity-checkbox').forEach(cb => {
-                    cb.checked = false;
-                    cb.dispatchEvent(new Event('change'));
-                });
-            });
-            
-            document.getElementById('selectCommon').addEventListener('click', () => {
-                document.querySelectorAll('.activity-checkbox').forEach(cb => {
-                    const type = cb.id.replace('type-', '');
-                    const shouldCheck = activityTypes[type]?.common || false;
-                    cb.checked = shouldCheck;
-                    cb.dispatchEvent(new Event('change'));
-                });
-            });
-        }
-        
-        function updateActivityTypeSelection() {
-            selectedActivityTypes.clear();
-            document.querySelectorAll('.activity-checkbox:checked').forEach(cb => {
-                const type = cb.id.replace('type-', '');
-                selectedActivityTypes.add(type);
-            });
-            
-            // If activities are already loaded, filter them
-            if (currentActivities.length > 0) {
-                filterAndDisplayActivities();
-            }
-        }
-        
-        function filterAndDisplayActivities() {
-            if (selectedActivityTypes.size === 0) {
-                displayActivities([]);
-                updateStats([]);
-                return;
-            }
-            
-            const filteredActivities = currentActivities.filter(activity => {
-                return selectedActivityTypes.has(activity.type);
-            });
-            
-            displayActivities(filteredActivities);
-            updateStats(filteredActivities);
-        }
-
-        async function loadActivities() {
-            const loadBtn = document.getElementById('loadActivities');
-            const activityList = document.getElementById('activityList');
-            const statsDiv = document.getElementById('stats');
-            
-            loadBtn.disabled = true;
-            loadBtn.textContent = 'Loading...';
-            
-            activityList.innerHTML = '<div class="loading">🔄 Loading activities...</div>';
-            statsDiv.style.display = 'none';
-            
-            try {
-                const startDate = document.getElementById('startDate').value;
-                const endDate = document.getElementById('endDate').value;
-                const selectedBoard = document.getElementById('boardFilter').value;
-                
-                const token = await t.getRestApi().getToken();
-                const member = await t.member('me');
-                
-                let activities = [];
-                const boardsToQuery = selectedBoard ? [allBoards.find(b => b.id === selectedBoard)] : allBoards;
-                
-                // Fetch activities from selected boards
-                for (const board of boardsToQuery.filter(Boolean)) {
-                    try {
-                        const url = `https://api.trello.com/1/boards/${board.id}/actions` +
-                            `?key=${TRELLO_API_KEY}&token=${token}` +
-                            `&since=${startDate}&before=${new Date(endDate + 'T23:59:59Z').toISOString()}` +
-                            `&limit=1000&member=me`;
-                        
-                        const response = await fetch(url);
-                        if (response.ok) {
-                            const boardActivities = await response.json();
-                            activities = activities.concat(boardActivities.map(activity => ({
-                                ...activity,
-                                boardName: board.name,
-                                boardId: board.id
-                            })));
-                        }
-                    } catch (error) {
-                        console.error(`Error loading activities for board ${board.name}:`, error);
-                    }
-                }
-                
-                // Sort activities by date (newest first)
-                activities.sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                currentActivities = activities;
-                filterAndDisplayActivities(); // Use the new filter function instead of displayActivities
-                
-            } catch (error) {
-                console.error('Error loading activities:', error);
-                activityList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">⚠️</div>
-                        <h3>Error loading activities</h3>
-                        <p>There was an error loading your Trello activities. Please try again.</p>
-                    </div>
-                `;
-            } finally {
-                loadBtn.disabled = false;
-                loadBtn.textContent = 'Load Activities';
-            }
-        }
-        
-        function displayActivities(activities) {
-            const activityList = document.getElementById('activityList');
-            
-            if (activities.length === 0) {
-                activityList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📭</div>
-                        <h3>No activities found</h3>
-                        <p>No activities were found for the selected date range and filters.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            const activitiesHTML = activities.map(activity => {
-                const type = activityTypes[activity.type] || activityTypes.default;
-                const date = new Date(activity.date);
-                const timeAgo = getTimeAgo(date);
-                
-                let description = getActivityDescription(activity);
-                
-                return `
-                    <div class="activity-item">
-                        <div class="activity-icon ${type.class}">
-                            ${type.icon}
-                        </div>
-                        <div class="activity-content">
-                            <p class="activity-text">${description}</p>
-                            <div class="activity-meta">
-                                <span class="activity-board">${activity.boardName}</span>
-                                <span>${timeAgo}</span>
-                                <span>${type.name}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            activityList.innerHTML = activitiesHTML;
-        }
-        
-        function getActivityDescription(activity) {
-            const memberName = activity.memberCreator ? activity.memberCreator.fullName : 'Someone';
-            
-            switch (activity.type) {
-                case 'createCard':
-                    return `Created card "${activity.data.card.name}"`;
-                case 'updateCard':
-                    return `Updated card "${activity.data.card.name}"`;
-                case 'commentCard':
-                    return `Commented on "${activity.data.card.name}": "${activity.data.text.substring(0, 100)}${activity.data.text.length > 100 ? '...' : ''}"`;
-                case 'addAttachmentToCard':
-                    return `Added attachment to "${activity.data.card.name}"`;
-                case 'addChecklistToCard':
-                    return `Added checklist "${activity.data.checklist.name}" to "${activity.data.card.name}"`;
-                case 'addMemberToCard':
-                    return `Added member to "${activity.data.card.name}"`;
-                case 'addLabelToCard':
-                    return `Added label to "${activity.data.card.name}"`;
-                case 'moveCard':
-                    const fromList = activity.data.listBefore ? activity.data.listBefore.name : 'Unknown';
-                    const toList = activity.data.listAfter ? activity.data.listAfter.name : 'Unknown';
-                    return `Moved "${activity.data.card.name}" from "${fromList}" to "${toList}"`;
-                case 'deleteCard':
-                    return `Deleted card "${activity.data.card.name}"`;
-                default:
-                    return `${activity.type.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}`;
-            }
-        }
-        
-        function updateStats(activities) {
-            const statsDiv = document.getElementById('stats');
-            const totalActivities = activities.length;
-            
-            const cardActivities = activities.filter(a => 
-                ['createCard', 'updateCard', 'moveCard', 'deleteCard'].includes(a.type)
-            ).length;
-            
-            const commentActivities = activities.filter(a => a.type === 'commentCard').length;
-            
-            const uniqueBoards = new Set(activities.map(a => a.boardId)).size;
-            
-            document.getElementById('totalActivities').textContent = totalActivities;
-            document.getElementById('cardActivities').textContent = cardActivities;
-            document.getElementById('commentActivities').textContent = commentActivities;
-            document.getElementById('boardsAffected').textContent = uniqueBoards;
-            
-            statsDiv.style.display = totalActivities > 0 ? 'grid' : 'none';
-        }
-        
-        function getTimeAgo(date) {
-            const now = new Date();
-            const diffInSeconds = Math.floor((now - date) / 1000);
-            
-            if (diffInSeconds < 60) return 'Just now';
-            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-            if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-            return date.toLocaleDateString();
-        }
-        
             // Initialize when DOM is ready
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', init);
@@ -771,8 +494,206 @@
                 init();
             }
             
-        })();
-        
+            async function init() {
+                console.log('🔧 Initializing main interface...');
+                
+                // Set default dates (last 7 days)
+                const endDate = new Date();
+                const startDate = new Date();
+                startDate.setDate(endDate.getDate() - 7);
+                
+                document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+                document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+                
+                // Validate date range on change
+                document.getElementById('startDate').addEventListener('change', validateDateRange);
+                document.getElementById('endDate').addEventListener('change', validateDateRange);
+                
+                // Load boards and initialize filters
+                await loadBoards();
+                initializeActivityTypeFilter();
+                
+                // Set up event listeners
+                document.getElementById('loadActivities').addEventListener('click', loadActivities);
+                
+                // Load initial activities
+                await loadActivities();
+            }
+            
+            function validateDateRange() {
+                const startDate = new Date(document.getElementById('startDate').value);
+                const endDate = new Date(document.getElementById('endDate').value);
+                const daysDiff = (endDate - startDate) / (1000 * 60 * 60 * 24);
+                
+                if (daysDiff > 31) {
+                    alert('Date range cannot exceed 31 days');
+                    const newEndDate = new Date(startDate);
+                    newEndDate.setDate(startDate.getDate() + 31);
+                    document.getElementById('endDate').value = newEndDate.toISOString().split('T')[0];
+                }
+                
+                if (startDate > endDate) {
+                    document.getElementById('endDate').value = document.getElementById('startDate').value;
+                }
+            }
+            
+            async function loadBoards() {
+                try {
+                    // For direct access, we'll need a different approach to get boards
+                    // This is a placeholder - in a real Power-Up context, we'd use t.member('me')
+                    const boardFilter = document.getElementById('boardFilter');
+                    boardFilter.innerHTML = '<option value="">All Boards</option>';
+                    
+                    console.log('🔧 Board loading would require Trello context');
+                } catch (error) {
+                    console.error('Error loading boards:', error);
+                }
+            }
+            
+            function initializeActivityTypeFilter() {
+                const activityTypesContainer = document.getElementById('activityTypes');
+                
+                // Create checkboxes for each activity type
+                Object.entries(activityTypes).forEach(([type, config]) => {
+                    if (type === 'default') return; // Skip default type
+                    
+                    const item = document.createElement('div');
+                    item.className = 'activity-type-item';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'activity-checkbox';
+                    checkbox.id = `type-${type}`;
+                    checkbox.checked = config.common; // Default to checked for common types
+                    checkbox.addEventListener('change', () => {
+                        updateActivityTypeSelection();
+                        item.classList.toggle('active', checkbox.checked);
+                    });
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `type-${type}`;
+                    label.className = 'activity-type-label';
+                    label.innerHTML = `
+                        <span class="activity-type-icon">${config.icon}</span>
+                        ${config.name}
+                    `;
+                    
+                    item.appendChild(checkbox);
+                    item.appendChild(label);
+                    activityTypesContainer.appendChild(item);
+                    
+                    // Set initial state
+                    if (config.common) {
+                        selectedActivityTypes.add(type);
+                        item.classList.add('active');
+                    }
+                    
+                    // Make the whole item clickable
+                    item.addEventListener('click', (e) => {
+                        if (e.target !== checkbox) {
+                            checkbox.checked = !checkbox.checked;
+                            checkbox.dispatchEvent(new Event('change'));
+                        }
+                    });
+                });
+                
+                // Set up filter control buttons
+                document.getElementById('selectAll').addEventListener('click', () => {
+                    document.querySelectorAll('.activity-checkbox').forEach(cb => {
+                        cb.checked = true;
+                        cb.dispatchEvent(new Event('change'));
+                    });
+                });
+                
+                document.getElementById('selectNone').addEventListener('click', () => {
+                    document.querySelectorAll('.activity-checkbox').forEach(cb => {
+                        cb.checked = false;
+                        cb.dispatchEvent(new Event('change'));
+                    });
+                });
+                
+                document.getElementById('selectCommon').addEventListener('click', () => {
+                    document.querySelectorAll('.activity-checkbox').forEach(cb => {
+                        const type = cb.id.replace('type-', '');
+                        const shouldCheck = activityTypes[type]?.common || false;
+                        cb.checked = shouldCheck;
+                        cb.dispatchEvent(new Event('change'));
+                    });
+                });
+            }
+            
+            function updateActivityTypeSelection() {
+                selectedActivityTypes.clear();
+                document.querySelectorAll('.activity-checkbox:checked').forEach(cb => {
+                    const type = cb.id.replace('type-', '');
+                    selectedActivityTypes.add(type);
+                });
+                
+                // If activities are already loaded, filter them
+                if (currentActivities.length > 0) {
+                    filterAndDisplayActivities();
+                }
+            }
+            
+            function filterAndDisplayActivities() {
+                if (selectedActivityTypes.size === 0) {
+                    displayActivities([]);
+                    updateStats([]);
+                    return;
+                }
+                
+                const filteredActivities = currentActivities.filter(activity => {
+                    return selectedActivityTypes.has(activity.type);
+                });
+                
+                displayActivities(filteredActivities);
+                updateStats(filteredActivities);
+            }
+            
+            async function loadActivities() {
+                const loadBtn = document.getElementById('loadActivities');
+                const activityList = document.getElementById('activityList');
+                const statsDiv = document.getElementById('stats');
+                
+                loadBtn.disabled = true;
+                loadBtn.textContent = 'Loading...';
+                
+                activityList.innerHTML = '<div class="loading">🔄 Loading activities...</div>';
+                statsDiv.style.display = 'none';
+                
+                try {
+                    // For direct access, show a message that Trello context is needed
+                    activityList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">🔗</div>
+                            <h3>Trello Integration Required</h3>
+                            <p>This Power-Up needs to be accessed through Trello to load your activity data.</p>
+                            <p>Install it as a Power-Up on your Trello board to see your activities!</p>
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Error loading activities:', error);
+                    activityList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">⚠️</div>
+                            <h3>Error loading activities</h3>
+                            <p>There was an error loading your Trello activities. Please try again.</p>
+                        </div>
+                    `;
+                } finally {
+                    loadBtn.disabled = false;
+                    loadBtn.textContent = 'Load Activities';
+                }
+            }
+            
+            function displayActivities(activities) {
+                // Implementation would go here for displaying activities
+            }
+            
+            function updateStats(activities) {
+                // Implementation would go here for updating stats
+            }
+        }
     </script>
 </body>
 </html>
