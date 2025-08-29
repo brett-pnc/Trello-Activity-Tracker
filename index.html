@@ -184,11 +184,7 @@
                         });
                         
                         const token = await t.getRestApi().getToken({
-                            scope: {
-                                read: true,
-                                write: false,
-                                account: false
-                            }
+                            scope: 'read'
                         });
                         
                         if (token) {
@@ -372,11 +368,7 @@
                                 
                                 // Force authorization with explicit scope
                                 token = await t.getRestApi().authorize({
-                                    scope: {
-                                        read: true,
-                                        write: false,
-                                        account: false
-                                    }
+                                    scope: 'read'
                                 });
                                 
                                 console.log('🔧 Authorization response:', token ? 'received' : 'undefined');
@@ -388,11 +380,7 @@
                                     // Try alternative method
                                     console.log('🔧 Trying alternative authorization method...');
                                     token = await t.getRestApi().getToken({
-                                        scope: {
-                                            read: true,
-                                            write: false,
-                                            account: false
-                                        }
+                                        scope: 'read'
                                     });
                                     
                                     if (token) {
