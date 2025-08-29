@@ -408,8 +408,15 @@
         let currentActivities = [];
         let selectedActivityTypes = new Set();
         
-        // Initialize the interface
+        // Initialize the main interface only if not in Power-Up context
         async function init() {
+            // Don't initialize the main UI if we're being loaded as a Power-Up
+            if (window.parent !== window) {
+                console.log('Running in iframe context, skipping main UI initialization');
+                return;
+            }
+            
+            console.log('Initializing main UI...');
             // Set default dates (last 7 days)
             const endDate = new Date();
             const startDate = new Date();
@@ -752,51 +759,16 @@
         }
         
         // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', init);
-        
-        // Trello Power-Up configuration
-        window.TrelloPowerUp.initialize({
-            'board-buttons': function(t, opts) {
-                console.log('Board buttons capability called');
-                return [{
-                    icon: {
-                        dark: 'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-white.svg',
-                        light: 'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-black.svg'
-                    },
-                    text: 'Activity Tracker',
-                    callback: function(t) {
-                        console.log('Activity Tracker button clicked');
-                        return t.overlay({
-                            url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/',
-                            args: { source: 'board-button' }
-                        });
-                    }
-                }];
-            },
-            'card-buttons': function(t, opts) {
-                return [{
-                    icon: '📊',
-                    text: 'Activity Tracker',
-                    callback: function(t) {
-                        return t.overlay({
-                            url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/',
-                            args: { source: 'card-button' }
-                        });
-                    }
-                }];
-            },
-            'show-settings': function(t, options) {
-                return t.popup({
-                    title: 'Activity Tracker Settings', 
-                    url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/',
-                    height: 400
-                });
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, checking context...');
+            if (window.parent !== window) {
+                console.log('In Power-Up iframe context - Power-Up should be initialized');
+            } else {
+                console.log('Direct page access - initializing main interface');
+                init();
             }
         });
         
-        // Additional debug logging
-        console.log('Trello Power-Up initialized:', window.TrelloPowerUp);
-        console.log('Current URL:', window.location.href);
     </script>
 </body>
 </html>
