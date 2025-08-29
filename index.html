@@ -340,14 +340,19 @@
 
                 console.log('🔧 Requesting Trello token...');
                 
-                // First try to get an existing token
+                // Try to get token without authorization first (for already authorized users)
                 let token;
                 try {
                     token = await t.getRestApi().getToken();
+                    console.log('🔧 Token response:', token ? 'received' : 'undefined');
                 } catch (tokenError) {
-                    console.log('🔧 No existing token, requesting authorization...');
+                    console.log('🔧 Initial token request failed:', tokenError.message);
+                }
+                
+                // If no token, try with explicit authorization request
+                if (!token) {
+                    console.log('🔧 No token found, requesting with authorization...');
                     
-                    // Show authorization prompt
                     resultsDiv.innerHTML = `
                         <div style="text-align: center; padding: 40px; color: #0079bf;">
                             <div style="font-size: 32px; margin-bottom: 16px;">🔑</div>
@@ -357,17 +362,16 @@
                         </div>
                     `;
                     
-                    // Set up authorization button
                     const authBtn = document.getElementById('authorizeBtn');
                     if (authBtn) {
                         authBtn.addEventListener('click', async () => {
                             try {
-                                console.log('🔧 Starting authorization process...');
+                                console.log('🔧 User clicked authorize, requesting token...');
                                 authBtn.textContent = 'Authorizing...';
                                 authBtn.disabled = true;
                                 
-                                // Request token with authorization
-                                token = await t.getRestApi().getToken({
+                                // Force authorization with explicit scope
+                                token = await t.getRestApi().authorize({
                                     scope: {
                                         read: true,
                                         write: false,
@@ -375,12 +379,28 @@
                                     }
                                 });
                                 
+                                console.log('🔧 Authorization response:', token ? 'received' : 'undefined');
+                                
                                 if (token) {
                                     console.log('✅ Authorization successful!');
-                                    // Continue with API test
                                     await testApiConnection(token, resultsDiv);
                                 } else {
-                                    throw new Error('Authorization failed - no token returned');
+                                    // Try alternative method
+                                    console.log('🔧 Trying alternative authorization method...');
+                                    token = await t.getRestApi().getToken({
+                                        scope: {
+                                            read: true,
+                                            write: false,
+                                            account: false
+                                        }
+                                    });
+                                    
+                                    if (token) {
+                                        console.log('✅ Alternative method successful!');
+                                        await testApiConnection(token, resultsDiv);
+                                    } else {
+                                        throw new Error('Both authorization methods returned undefined token');
+                                    }
                                 }
                                 
                             } catch (authError) {
@@ -397,14 +417,15 @@
                             }
                         });
                     }
-                    return; // Exit here, wait for user to click authorize
+                    return; // Exit here, wait for user authorization
                 }
                 
+                // If we have a token, test it
                 if (token) {
-                    console.log('✅ Got existing token successfully');
+                    console.log('✅ Got token, testing API connection...');
                     await testApiConnection(token, resultsDiv);
                 } else {
-                    throw new Error('Token is undefined after successful call');
+                    throw new Error('Token is undefined after all attempts');
                 }
                 
             } catch (error) {
