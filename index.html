@@ -109,56 +109,18 @@
         const isOverlayMode = urlParams.get('mode') === 'overlay';
         
         if (isOverlayMode) {
-            // Hide the info page and show overlay content
+            // Show overlay interface
+            showOverlayInterface();
+        } else {
+            // Initialize normal Power-Up mode
+            initializePowerUp();
+        }
+        
+        function showOverlayInterface() {
+            console.log('🔧 Loading overlay mode...');
+            
             document.body.innerHTML = `
-                <div id="overlay-container" style="padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
-                        <h2 style="margin: 0; color: #172b4d;">📊 Activity Tracker</h2>
-                        <button id="closeOverlay" style="background: #f4f5f7; border: 1px solid #dfe1e6; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Close</button>
-                    </div>
-                    <div style="text-align: center; padding: 60px 20px; color: #5e6c84;">
-                        <div style="font-size: 48px; margin-bottom: 16px;">🔄</div>
-                        <h3>Loading Activity Tracker...</h3>
-                        <p>Setting up your activity dashboard...</p>
-                    </div>
-                </div>
-            `;
-            
-            // Initialize overlay functionality
-            initializeOverlay();
-            return;
-        }
-        
-        function initializeOverlay() {
-            console.log('🔧 Initializing overlay mode...');
-            
-            // Set up close button
-            const closeBtn = document.getElementById('closeOverlay');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', function() {
-                    console.log('🔧 Closing overlay...');
-                    if (window.TrelloPowerUp) {
-                        const t = window.TrelloPowerUp.iframe();
-                        t.closeOverlay();
-                    }
-                });
-            }
-            
-            // Load the full tracker interface
-            setTimeout(() => {
-                loadFullTracker();
-            }, 1000);
-        }
-        
-        function loadFullTracker() {
-            console.log('🔧 Loading full tracker interface...');
-            
-            const container = document.getElementById('overlay-container');
-            if (!container) return;
-            
-            // For now, show a working interface
-            container.innerHTML = `
-                <div style="max-width: 900px; margin: 0 auto;">
+                <div style="padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #dfe1e6; padding-bottom: 15px;">
                         <h2 style="margin: 0; color: #172b4d;">📊 Activity Tracker</h2>
                         <button id="closeOverlay" style="background: #f4f5f7; border: 1px solid #dfe1e6; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px;">Close</button>
@@ -196,11 +158,10 @@
                 </div>
             `;
             
-            // Set up event listeners
-            setupOverlayEvents();
+            setupOverlayEventListeners();
         }
         
-        function setupOverlayEvents() {
+        function setupOverlayEventListeners() {
             // Set default dates (last 7 days)
             const endDate = new Date();
             const startDate = new Date();
@@ -211,7 +172,7 @@
             if (startInput) startInput.value = startDate.toISOString().split('T')[0];
             if (endInput) endInput.value = endDate.toISOString().split('T')[0];
             
-            // Set up close button
+            // Close button
             const closeBtn = document.getElementById('closeOverlay');
             if (closeBtn) {
                 closeBtn.addEventListener('click', function() {
@@ -223,17 +184,14 @@
                 });
             }
             
-            // Set up load button
+            // Load activities button
             const loadBtn = document.getElementById('loadActivities');
             if (loadBtn) {
-                loadBtn.addEventListener('click', function() {
-                    console.log('🔧 Loading activities...');
-                    loadActivities();
-                });
+                loadBtn.addEventListener('click', loadActivitiesDemo);
             }
         }
         
-        async function loadActivities() {
+        async function loadActivitiesDemo() {
             const resultsDiv = document.getElementById('activityResults');
             if (!resultsDiv) return;
             
@@ -251,14 +209,14 @@
                     const token = await t.getRestApi().getToken();
                     console.log('✅ Got Trello token, can load activities');
                     
-                    // Simulate loading for now
+                    // Simulate loading
                     setTimeout(() => {
                         resultsDiv.innerHTML = `
                             <div style="text-align: center; padding: 40px; color: #0079bf;">
                                 <div style="font-size: 32px; margin-bottom: 16px;">✅</div>
                                 <h3>Integration Working!</h3>
                                 <p>Your Activity Tracker overlay is successfully connected to Trello.</p>
-                                <p style="font-size: 14px; color: #5e6c84; margin-top: 20px;">Full activity loading functionality will be implemented next.</p>
+                                <p style="font-size: 14px; color: #5e6c84; margin-top: 20px;">Ready for full implementation!</p>
                             </div>
                         `;
                     }, 2000);
@@ -274,32 +232,33 @@
                 `;
             }
         }
-        // POWER-UP INITIALIZATION - This must run first and fast
-        console.log('🚀 Starting Power-Up initialization...');
-        
-        // Immediately initialize the Power-Up if TrelloPowerUp is available
-        if (typeof window.TrelloPowerUp !== 'undefined') {
-            console.log('✅ TrelloPowerUp available, initializing immediately');
-            initializePowerUp();
-        } else {
-            console.log('⏳ TrelloPowerUp not ready, waiting...');
-            // Try multiple times quickly
-            let attempts = 0;
-            const maxAttempts = 50;
-            const checkInterval = setInterval(() => {
-                attempts++;
-                if (typeof window.TrelloPowerUp !== 'undefined') {
-                    console.log('✅ TrelloPowerUp ready after', attempts, 'attempts');
-                    clearInterval(checkInterval);
-                    initializePowerUp();
-                } else if (attempts >= maxAttempts) {
-                    console.error('❌ TrelloPowerUp failed to load after', maxAttempts, 'attempts');
-                    clearInterval(checkInterval);
-                }
-            }, 100);
-        }
         
         function initializePowerUp() {
+            console.log('🚀 Starting Power-Up initialization...');
+            
+            // Wait for TrelloPowerUp to be available
+            if (typeof window.TrelloPowerUp !== 'undefined') {
+                console.log('✅ TrelloPowerUp available, initializing immediately');
+                setupPowerUpCapabilities();
+            } else {
+                console.log('⏳ TrelloPowerUp not ready, waiting...');
+                let attempts = 0;
+                const maxAttempts = 50;
+                const checkInterval = setInterval(() => {
+                    attempts++;
+                    if (typeof window.TrelloPowerUp !== 'undefined') {
+                        console.log('✅ TrelloPowerUp ready after', attempts, 'attempts');
+                        clearInterval(checkInterval);
+                        setupPowerUpCapabilities();
+                    } else if (attempts >= maxAttempts) {
+                        console.error('❌ TrelloPowerUp failed to load after', maxAttempts, 'attempts');
+                        clearInterval(checkInterval);
+                    }
+                }, 100);
+            }
+        }
+        
+        function setupPowerUpCapabilities() {
             try {
                 console.log('🔧 Initializing Power-Up capabilities...');
                 
@@ -349,7 +308,8 @@
                         console.log('🎯 Show settings called');
                         return t.popup({
                             title: 'Activity Tracker Settings',
-                            url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/overlay.html?settings=true'
+                            url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?settings=true',
+                            args: { source: 'settings' }
                         });
                     },
                     
