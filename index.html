@@ -119,9 +119,9 @@
 </head>
 <body>
     <div class="container">
-        <div class="icon">ðŸ“Š</div>
+        <div class="icon">📊</div>
         <h1 class="title">Activity Tracker Power-Up</h1>
-        <div class="status">âœ… Power-Up Active</div>
+        <div class="status">✅ Power-Up Active</div>
         <p class="subtitle">
             Your Trello Activity Tracker Power-Up is installed and ready to use!
             This page serves as the Power-Up configuration and you can access the activity tracker through your Trello board.
@@ -137,12 +137,12 @@
         </div>
         
         <div class="instructions">
-            <h3>ðŸ“‹ Features Available</h3>
-            <div class="step">ðŸ“… Date range selection (up to 31 days)</div>
+            <h3>📋 Features Available</h3>
+            <div class="step">📅 Date range selection (up to 31 days)</div>
             <div class="step">ðŸŽ¯ Board-specific filtering</div>
-            <div class="step">ðŸ” Activity type filtering with checkboxes</div>
-            <div class="step">ðŸ“Š Real-time statistics and summaries</div>
-            <div class="step">ðŸ“± Responsive design for all devices</div>
+            <div class="step">🔍 Activity type filtering with checkboxes</div>
+            <div class="step">📊 Real-time statistics and summaries</div>
+            <div class="step">📱 Responsive design for all devices</div>
         </div>
     </div>
 
@@ -164,12 +164,12 @@
         }
         
         function showAuthorizationInterface() {
-            console.log('ðŸ”§ Loading authorization mode...');
+            console.log('🔍§ Loading authorization mode...');
             
             document.body.innerHTML = `
                 <div style="padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 500px; margin: 0 auto;">
                     <div style="text-align: center; padding: 40px 20px;">
-                        <div style="font-size: 64px; margin-bottom: 20px;">ðŸ”‘</div>
+                        <div style="font-size: 64px; margin-bottom: 20px;">🔍‘</div>
                         <h2 style="margin: 0 0 16px 0; color: #172b4d;">Authorize Activity Tracker</h2>
                         <p style="color: #5e6c84; margin-bottom: 32px; line-height: 1.5;">
                             To track your Trello activities, we need permission to read your boards and activities. 
@@ -233,7 +233,7 @@
                         if (token) {
                             authStatus.innerHTML = `
                                 <div style="padding: 16px; background: #e3fcef; border: 1px solid #61bd4f; border-radius: 4px; color: #006644;">
-                                    <strong>âœ… Authorization Successful!</strong><br>
+                                    <strong>✅ Authorization Successful!</strong><br>
                                     You can now close this window and use the Activity Tracker.
                                 </div>
                             `;
@@ -277,12 +277,12 @@
         }
 
         function showOverlayInterface() {
-            console.log('ðŸ”§ Loading overlay mode...');
+            console.log('🔍§ Loading overlay mode...');
             
             document.body.innerHTML = `
                 <div style="padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; width: 100%; max-width: 680px; margin: 0 auto;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #dfe1e6; padding-bottom: 15px;">
-                        <h2 style="margin: 0; color: #172b4d;">ðŸ“Š Activity Tracker</h2>
+                        <h2 style="margin: 0; color: #172b4d;">📊 Activity Tracker</h2>
                         <button id="loadActivities" style="padding: 10px 20px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">Load Activities</button>
                     </div>
                     
@@ -320,7 +320,7 @@
                     </div>
                     
                     <div id="activityResults" style="text-align: center; padding: 40px 20px; color: #5e6c84; background: white; border-radius: 8px; border: 1px solid #dfe1e6;">
-                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">ðŸ“…</div>
+                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">📅</div>
                         <h3>Ready to track your activities!</h3>
                         <p>Select your date range and click "Load Activities" to see your Trello activity data.</p>
                     </div>
@@ -332,27 +332,27 @@
         
         // Global variables for activity tracking
         const activityTypes = {
-            createCard: { icon: 'ðŸ“‹', name: 'Card Created', class: 'type-card', common: true },
-            updateCard: { icon: 'âœï¸', name: 'Card Updated', class: 'type-card', common: true },
+            createCard: { icon: '📋', name: 'Card Created', class: 'type-card', common: true },
+            updateCard: { icon: '✏️', name: 'Card Updated', class: 'type-card', common: true },
             commentCard: { icon: 'ðŸ’¬', name: 'Comment Added', class: 'type-comment', common: true },
             addAttachmentToCard: { icon: 'ðŸ“Ž', name: 'Attachment Added', class: 'type-attachment', common: false },
             addChecklistToCard: { icon: 'â˜‘ï¸', name: 'Checklist Added', class: 'type-checklist', common: false },
-            addMemberToCard: { icon: 'ðŸ‘¤', name: 'Member Added', class: 'type-member', common: false },
-            addLabelToCard: { icon: 'ðŸ·ï¸', name: 'Label Added', class: 'type-label', common: false },
+            addMemberToCard: { icon: '👤', name: 'Member Added', class: 'type-member', common: false },
+            addLabelToCard: { icon: '🏷️', name: 'Label Added', class: 'type-label', common: false },
             moveCard: { icon: 'â†”ï¸', name: 'Card Moved', class: 'type-card', common: true },
             deleteCard: { icon: 'ðŸ—‘ï¸', name: 'Card Deleted', class: 'type-card', common: false },
-            removeLabelFromCard: { icon: 'ðŸ·ï¸', name: 'Label Removed', class: 'type-label', common: false },
-            removeMemberFromCard: { icon: 'ðŸ‘¤', name: 'Member Removed', class: 'type-member', common: false },
-            updateCheckItemStateOnCard: { icon: 'âœ…', name: 'Checklist Item Updated', class: 'type-checklist', common: false },
-            createList: { icon: 'ðŸ“', name: 'List Created', class: 'type-other', common: false },
-            updateList: { icon: 'ðŸ“', name: 'List Updated', class: 'type-other', common: false },
-            moveListFromBoard: { icon: 'ðŸ“', name: 'List Moved', class: 'type-other', common: false },
-            copyCard: { icon: 'ðŸ“„', name: 'Card Copied', class: 'type-card', common: false },
-            convertToCardFromCheckItem: { icon: 'ðŸ”„', name: 'Checklist Item to Card', class: 'type-card', common: false },
-            addToOrganizationBoard: { icon: 'ðŸ¢', name: 'Added to Organization', class: 'type-other', common: false },
-            removeFromOrganizationBoard: { icon: 'ðŸ¢', name: 'Removed from Organization', class: 'type-other', common: false },
-            updateBoard: { icon: 'ðŸ“Š', name: 'Board Updated', class: 'type-other', common: false },
-            default: { icon: 'âš¡', name: 'Other Activity', class: 'type-other', common: false }
+            removeLabelFromCard: { icon: '🏷️', name: 'Label Removed', class: 'type-label', common: false },
+            removeMemberFromCard: { icon: '👤', name: 'Member Removed', class: 'type-member', common: false },
+            updateCheckItemStateOnCard: { icon: '✅', name: 'Checklist Item Updated', class: 'type-checklist', common: false },
+            createList: { icon: '📝', name: 'List Created', class: 'type-other', common: false },
+            updateList: { icon: '📝', name: 'List Updated', class: 'type-other', common: false },
+            moveListFromBoard: { icon: '📝', name: 'List Moved', class: 'type-other', common: false },
+            copyCard: { icon: '📄', name: 'Card Copied', class: 'type-card', common: false },
+            convertToCardFromCheckItem: { icon: '🔍„', name: 'Checklist Item to Card', class: 'type-card', common: false },
+            addToOrganizationBoard: { icon: '🏢', name: 'Added to Organization', class: 'type-other', common: false },
+            removeFromOrganizationBoard: { icon: '🏢', name: 'Removed from Organization', class: 'type-other', common: false },
+            updateBoard: { icon: '📊', name: 'Board Updated', class: 'type-other', common: false },
+            default: { icon: '⚡', name: 'Other Activity', class: 'type-other', common: false }
         };
         
         let allBoards = [];
@@ -415,7 +415,7 @@
             if (userFilter) {
                 userFilter.addEventListener('change', (e) => {
                     selectedUserId = e.target.value;
-                    console.log('ðŸ‘¤ User filter changed to:', selectedUserId || 'All users');
+                    console.log('👤 User filter changed to:', selectedUserId || 'All users');
                     if (currentActivities.length > 0) {
                         displayFilteredActivities();
                     }
@@ -439,7 +439,7 @@
             loadBtn.textContent = 'Loading...';
             
             try {
-                console.log('ðŸ”§ Starting real activity loading...');
+                console.log('🔍§ Starting real activity loading...');
                 
                 const t = window.TrelloPowerUp.iframe({
                     appKey: 'caeeec29db6d299bd3b65e9743854d5d',
@@ -454,7 +454,7 @@
                     // Show authorization UI if no token
                     resultsDiv.innerHTML = `
                         <div style="text-align: center; padding: 40px; color: #0079bf;">
-                            <div style="font-size: 32px; margin-bottom: 16px;">ðŸ”‘</div>
+                            <div style="font-size: 32px; margin-bottom: 16px;">🔍‘</div>
                             <h3>Authorization Required</h3>
                             <p>Please authorize the Activity Tracker to access your Trello data.</p>
                             <button id="authorizeBtn" style="margin-top: 15px; padding: 12px 24px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">Authorize Access</button>
@@ -523,12 +523,12 @@
             const endDate = document.getElementById('endDate').value;
             const selectedBoardId = document.getElementById('boardFilter').value;
             
-            console.log('ðŸ“… Date range:', startDate, 'to', endDate);
-            console.log('ðŸ“‹ Selected board ID:', selectedBoardId || 'All boards');
+            console.log('📅 Date range:', startDate, 'to', endDate);
+            console.log('📋 Selected board ID:', selectedBoardId || 'All boards');
             
             resultsDiv.innerHTML = `
                 <div style="text-align: center; padding: 40px; color: #5e6c84;">
-                    <div style="font-size: 32px; margin-bottom: 16px;">ðŸ”„</div>
+                    <div style="font-size: 32px; margin-bottom: 16px;">🔍„</div>
                     <h3>Loading Activities...</h3>
                     <p>Fetching your Trello activities for ${startDate} to ${endDate}</p>
                 </div>
@@ -536,7 +536,7 @@
             
             // Load boards first if not already loaded
             if (allBoards.length === 0) {
-                console.log('ðŸ“‹ Loading boards...');
+                console.log('📋 Loading boards...');
                 await loadBoards(token);
             }
             
@@ -545,20 +545,20 @@
                 allBoards.filter(board => board.id === selectedBoardId) : 
                 allBoards;
             
-            console.log('ðŸ“‹ Querying', boardsToQuery.length, 'boards:', boardsToQuery.map(b => b.name));
+            console.log('📋 Querying', boardsToQuery.length, 'boards:', boardsToQuery.map(b => b.name));
             
             let allActivities = [];
             
             // Fetch activities from each board
             for (const board of boardsToQuery) {
                 try {
-                    console.log(`ðŸ“‹ Loading activities from: ${board.name} (${board.id})`);
+                    console.log(`📋 Loading activities from: ${board.name} (${board.id})`);
                     
                     // Create date objects for proper formatting
                     const startDateTime = new Date(startDate + 'T00:00:00Z').toISOString();
                     const endDateTime = new Date(endDate + 'T23:59:59Z').toISOString();
                     
-                    console.log(`ðŸ“… API date range: ${startDateTime} to ${endDateTime}`);
+                    console.log(`📅 API date range: ${startDateTime} to ${endDateTime}`);
                     
                     // Try different API approaches
                     const urls = [
@@ -573,17 +573,17 @@
                     
                     for (let i = 0; i < urls.length; i++) {
                         const url = urls[i];
-                        console.log(`ðŸ”— Trying URL ${i + 1}:`, url);
+                        console.log(`🔍— Trying URL ${i + 1}:`, url);
                         
                         const response = await fetch(url);
-                        console.log(`ðŸ“¡ Response status:`, response.status);
+                        console.log(`📡 Response status:`, response.status);
                         
                         if (response.ok) {
                             boardActivities = await response.json();
-                            console.log(`ðŸ“Š Raw response length:`, boardActivities.length);
+                            console.log(`📊 Raw response length:`, boardActivities.length);
                             
                             if (boardActivities.length > 0) {
-                                console.log(`âœ… Found ${boardActivities.length} activities with approach ${i + 1}`);
+                                console.log(`✅ Found ${boardActivities.length} activities with approach ${i + 1}`);
                                 break; // Success, stop trying other approaches
                             } else {
                                 console.log(`âš ï¸ No activities found with approach ${i + 1}, trying next...`);
@@ -595,8 +595,8 @@
                     }
                     
                     if (boardActivities.length > 0) {
-                        console.log(`âœ… Final result: ${boardActivities.length} activities from ${board.name}`);
-                        console.log(`ðŸ“‹ Sample activities:`, boardActivities.slice(0, 3).map(a => ({
+                        console.log(`✅ Final result: ${boardActivities.length} activities from ${board.name}`);
+                        console.log(`📋 Sample activities:`, boardActivities.slice(0, 3).map(a => ({
                             type: a.type,
                             date: a.date,
                             memberCreator: a.memberCreator?.fullName
@@ -618,10 +618,10 @@
                         const testResponse = await fetch(testUrl);
                         if (testResponse.ok) {
                             const testActivities = await testResponse.json();
-                            console.log(`ðŸ” Test: Board has ${testActivities.length} total recent activities`);
+                            console.log(`🔍 Test: Board has ${testActivities.length} total recent activities`);
                             if (testActivities.length > 0) {
-                                console.log(`ðŸ“… Latest activity date:`, testActivities[0].date);
-                                console.log(`ðŸ‘¤ Latest activity by:`, testActivities[0].memberCreator?.fullName);
+                                console.log(`📅 Latest activity date:`, testActivities[0].date);
+                                console.log(`👤 Latest activity by:`, testActivities[0].memberCreator?.fullName);
                             }
                         }
                     }
@@ -637,8 +637,8 @@
             console.log(`ðŸŽ‰ FINAL RESULT: ${allActivities.length} total activities loaded`);
             
             if (allActivities.length > 0) {
-                console.log(`ðŸ“Š Activity types found:`, [...new Set(allActivities.map(a => a.type))]);
-                console.log(`ðŸ“… Date range of activities:`, {
+                console.log(`📊 Activity types found:`, [...new Set(allActivities.map(a => a.type))]);
+                console.log(`📅 Date range of activities:`, {
                     oldest: allActivities[allActivities.length - 1]?.date,
                     newest: allActivities[0]?.date
                 });
@@ -653,14 +653,14 @@
                 // Show helpful message if no activities found
                 resultsDiv.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #5e6c84; background: white; border-radius: 8px; border: 1px solid #dfe1e6;">
-                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">ðŸ”</div>
+                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">🔍</div>
                         <h3>No Activities Found</h3>
                         <p>No activities were found for the selected date range (${startDate} to ${endDate}).</p>
                         <p style="font-size: 14px; color: #5e6c84; margin-top: 16px;">
                             Try:<br>
-                            â€¢ Expanding the date range<br>
-                            â€¢ Selecting "All Boards" instead of a specific board<br>
-                            â€¢ Checking if you were active on these boards during this period
+                            ┌¢ Expanding the date range<br>
+                            ┌¢ Selecting "All Boards" instead of a specific board<br>
+                            ┌¢ Checking if you were active on these boards during this period
                         </p>
                         <div style="margin-top: 20px;">
                             <strong>Debug info:</strong><br>
@@ -679,7 +679,7 @@
         }
         
         function extractUsers(activities) {
-            console.log('ðŸ‘¥ Extracting users from activities...');
+            console.log('👥 Extracting users from activities...');
             
             allUsers.clear();
             
@@ -697,7 +697,7 @@
                 }
             });
             
-            console.log('ðŸ‘¥ Found users:', Array.from(allUsers.values()).map(u => u.fullName));
+            console.log('👥 Found users:', Array.from(allUsers.values()).map(u => u.fullName));
             
             // Populate user filter dropdown
             const userFilter = document.getElementById('userFilter');
@@ -729,7 +729,7 @@
                 const response = await fetch(`https://api.trello.com/1/members/me/boards?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&filter=open`);
                 if (response.ok) {
                     allBoards = await response.json();
-                    console.log(`âœ… Loaded ${allBoards.length} boards`);
+                    console.log(`✅ Loaded ${allBoards.length} boards`);
                     
                     // Populate board filter dropdown
                     const boardFilter = document.getElementById('boardFilter');
@@ -883,7 +883,7 @@
                 );
             }
             
-            console.log(`ðŸ” Filtered to ${filteredActivities.length} activities from ${selectedActivityTypes.size} selected types and user filter: ${selectedUserId || 'all'}`);
+            console.log(`🔍 Filtered to ${filteredActivities.length} activities from ${selectedActivityTypes.size} selected types and user filter: ${selectedUserId || 'all'}`);
             
             displayStats(filteredActivities);
             displayActivitiesList(filteredActivities);
@@ -1076,7 +1076,7 @@
         }
         
         function exportToCSV() {
-            console.log('ðŸ“Š Starting CSV export...');
+            console.log('📊 Starting CSV export...');
             
             // Get current filtered activities
             let filteredActivities = currentActivities.filter(activity => 
@@ -1094,7 +1094,7 @@
                 return;
             }
             
-            console.log(`ðŸ“Š Exporting ${filteredActivities.length} activities to CSV`);
+            console.log(`📊 Exporting ${filteredActivities.length} activities to CSV`);
             
             // Create CSV headers
             const headers = [
@@ -1161,13 +1161,13 @@
             link.click();
             document.body.removeChild(link);
             
-            console.log(`âœ… CSV exported: ${filename}`);
+            console.log(`✅ CSV exported: ${filename}`);
             
             // Show success message
             const exportBtn = document.getElementById('exportCSV');
             if (exportBtn) {
                 const originalText = exportBtn.textContent;
-                exportBtn.textContent = `âœ… Exported ${filteredActivities.length} activities`;
+                exportBtn.textContent = `✅ Exported ${filteredActivities.length} activities`;
                 exportBtn.style.background = '#61bd4f';
                 
                 setTimeout(() => {
@@ -1210,16 +1210,16 @@
             
             // Wait for TrelloPowerUp to be available
             if (typeof window.TrelloPowerUp !== 'undefined') {
-                console.log('âœ… TrelloPowerUp available, initializing immediately');
+                console.log('✅ TrelloPowerUp available, initializing immediately');
                 setupPowerUpCapabilities();
             } else {
-                console.log('â³ TrelloPowerUp not ready, waiting...');
+                console.log('⏳ TrelloPowerUp not ready, waiting...');
                 let attempts = 0;
                 const maxAttempts = 50;
                 const checkInterval = setInterval(() => {
                     attempts++;
                     if (typeof window.TrelloPowerUp !== 'undefined') {
-                        console.log('âœ… TrelloPowerUp ready after', attempts, 'attempts');
+                        console.log('✅ TrelloPowerUp ready after', attempts, 'attempts');
                         clearInterval(checkInterval);
                         setupPowerUpCapabilities();
                     } else if (attempts >= maxAttempts) {
@@ -1232,7 +1232,7 @@
         
         function setupPowerUpCapabilities() {
             try {
-                console.log('ðŸ”§ Initializing Power-Up capabilities...');
+                console.log('🔍§ Initializing Power-Up capabilities...');
                 
                 window.TrelloPowerUp.initialize({
                     'board-buttons': function(t, opts) {
@@ -1254,7 +1254,7 @@
                                     fullscreen: false,
                                     title: 'Activity Tracker'
                                 }).then(function() {
-                                    console.log('âœ… Modal opened successfully');
+                                    console.log('✅ Modal opened successfully');
                                 }).catch(function(error) {
                                     console.error('âŒ Modal failed to open:', error);
                                 });
@@ -1297,7 +1297,7 @@
                         console.log('ðŸŽ¯ Authorization status check called');
                         return t.getRestApi().getToken()
                             .then(function(token) {
-                                console.log('âœ… User is authorized');
+                                console.log('✅ User is authorized');
                                 return { authorized: true };
                             })
                             .catch(function(error) {
@@ -1325,7 +1325,7 @@
                     }
                 });
                 
-                console.log('âœ… Power-Up initialized successfully!');
+                console.log('✅ Power-Up initialized successfully!');
                 
             } catch (error) {
                 console.error('âŒ Power-Up initialization error:', error);
