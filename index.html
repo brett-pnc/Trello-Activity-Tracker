@@ -128,7 +128,7 @@
         </p>
         
         <div class="instructions">
-            <h3>ðŸš€ How to Use Your Activity Tracker</h3>
+            <h3>🚀 How to Use Your Activity Tracker</h3>
             <div class="step">1. Look for the <strong>"Activity Tracker"</strong> button in your board's top menu</div>
             <div class="step">2. Click the button to open the activity tracker overlay</div>
             <div class="step">3. Select date ranges, filter by boards, and choose activity types</div>
@@ -139,7 +139,7 @@
         <div class="instructions">
             <h3>📋 Features Available</h3>
             <div class="step">📅 Date range selection (up to 31 days)</div>
-            <div class="step">ðŸŽ¯ Board-specific filtering</div>
+            <div class="step">🎯 Board-specific filtering</div>
             <div class="step">🔍 Activity type filtering with checkboxes</div>
             <div class="step">📊 Real-time statistics and summaries</div>
             <div class="step">📱 Responsive design for all devices</div>
@@ -334,13 +334,13 @@
         const activityTypes = {
             createCard: { icon: '📋', name: 'Card Created', class: 'type-card', common: true },
             updateCard: { icon: '✏️', name: 'Card Updated', class: 'type-card', common: true },
-            commentCard: { icon: 'ðŸ’¬', name: 'Comment Added', class: 'type-comment', common: true },
-            addAttachmentToCard: { icon: 'ðŸ“Ž', name: 'Attachment Added', class: 'type-attachment', common: false },
-            addChecklistToCard: { icon: 'â˜‘ï¸', name: 'Checklist Added', class: 'type-checklist', common: false },
+            commentCard: { icon: '💬', name: 'Comment Added', class: 'type-comment', common: true },
+            addAttachmentToCard: { icon: '📎', name: 'Attachment Added', class: 'type-attachment', common: false },
+            addChecklistToCard: { icon: '☑️', name: 'Checklist Added', class: 'type-checklist', common: false },
             addMemberToCard: { icon: '👤', name: 'Member Added', class: 'type-member', common: false },
             addLabelToCard: { icon: '🏷️', name: 'Label Added', class: 'type-label', common: false },
-            moveCard: { icon: 'â†”ï¸', name: 'Card Moved', class: 'type-card', common: true },
-            deleteCard: { icon: 'ðŸ—‘ï¸', name: 'Card Deleted', class: 'type-card', common: false },
+            moveCard: { icon: '↔️', name: 'Card Moved', class: 'type-card', common: true },
+            deleteCard: { icon: '🗑️', name: 'Card Deleted', class: 'type-card', common: false },
             removeLabelFromCard: { icon: '🏷️', name: 'Label Removed', class: 'type-label', common: false },
             removeMemberFromCard: { icon: '👤', name: 'Member Removed', class: 'type-member', common: false },
             updateCheckItemStateOnCard: { icon: '✅', name: 'Checklist Item Updated', class: 'type-checklist', common: false },
@@ -586,7 +586,7 @@
                                 console.log(`✅ Found ${boardActivities.length} activities with approach ${i + 1}`);
                                 break; // Success, stop trying other approaches
                             } else {
-                                console.log(`âš ï¸ No activities found with approach ${i + 1}, trying next...`);
+                                console.log(`⚠️ No activities found with approach ${i + 1}, trying next...`);
                             }
                         } else {
                             const errorText = await response.text();
@@ -611,7 +611,7 @@
                         
                         allActivities = allActivities.concat(enrichedActivities);
                     } else {
-                        console.log(`âš ï¸ No activities found for ${board.name} in date range`);
+                        console.log(`⚠️ No activities found for ${board.name} in date range`);
                         
                         // Try a broader search to see if there are ANY activities on this board
                         const testUrl = `https://api.trello.com/1/boards/${board.id}/actions?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&limit=10`;
@@ -634,7 +634,7 @@
             // Sort activities by date (newest first)
             allActivities.sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            console.log(`ðŸŽ‰ FINAL RESULT: ${allActivities.length} total activities loaded`);
+            console.log(`🎉 FINAL RESULT: ${allActivities.length} total activities loaded`);
             
             if (allActivities.length > 0) {
                 console.log(`📊 Activity types found:`, [...new Set(allActivities.map(a => a.type))]);
@@ -929,7 +929,7 @@
             if (activities.length === 0) {
                 listContainer.innerHTML = `
                     <div style="text-align: center; padding: 40px 20px; color: #5e6c84; background: white; border-radius: 8px; border: 1px solid #dfe1e6;">
-                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">ðŸ“­</div>
+                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">🔭</div>
                         <h3>No activities found</h3>
                         <p>No activities match the selected filters for this date range.</p>
                     </div>
@@ -1206,7 +1206,7 @@
             }).join('');
         }
                 function initializePowerUp() {
-            console.log('ðŸš€ Starting Power-Up initialization...');
+            console.log('🚀 Starting Power-Up initialization...');
             
             // Wait for TrelloPowerUp to be available
             if (typeof window.TrelloPowerUp !== 'undefined') {
@@ -1236,7 +1236,7 @@
                 
                 window.TrelloPowerUp.initialize({
                     'board-buttons': function(t, opts) {
-                        console.log('ðŸŽ¯ Board buttons capability called');
+                        console.log('🎯 Board buttons capability called');
                         return [{
                             icon: {
                                 dark: 'https://brett-pnc.github.io/Trello-Activity-Tracker/activity_tracker_icon_dark_theme.svg',
@@ -1244,8 +1244,8 @@
                             },
                             text: 'Activity Tracker',
                             callback: function(t) {
-                                console.log('ðŸš€ Board button clicked');
-                                console.log('ðŸš€ Opening modal...');
+                                console.log('🚀 Board button clicked');
+                                console.log('🚀 Opening modal...');
                                 return t.modal({
                                     url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?mode=overlay',
                                     args: { source: 'board-button' },
@@ -1263,7 +1263,7 @@
                     },
                     
                     'card-buttons': function(t, opts) {
-                        console.log('ðŸŽ¯ Card buttons capability called');
+                        console.log('🎯 Card buttons capability called');
                         return [{
                             icon: {
                                 dark: 'https://brett-pnc.github.io/Trello-Activity-Tracker/activity_tracker_icon_dark_theme.svg',
@@ -1271,7 +1271,7 @@
                             },
                             text: 'Activity Tracker',
                             callback: function(t) {
-                                console.log('ðŸš€ Card button clicked');
+                                console.log('🚀 Card button clicked');
                                 return t.modal({
                                     url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?mode=overlay',
                                     args: { source: 'card-button' },
@@ -1285,7 +1285,7 @@
                     },
                     
                     'show-settings': function(t, options) {
-                        console.log('ðŸŽ¯ Show settings called');
+                        console.log('🎯 Show settings called');
                         return t.popup({
                             title: 'Activity Tracker Settings',
                             url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?settings=true',
@@ -1294,7 +1294,7 @@
                     },
                     
                     'authorization-status': function(t, options) {
-                        console.log('ðŸŽ¯ Authorization status check called');
+                        console.log('🎯 Authorization status check called');
                         return t.getRestApi().getToken()
                             .then(function(token) {
                                 console.log('✅ User is authorized');
@@ -1307,7 +1307,7 @@
                     },
                     
                     'show-authorization': function(t, options) {
-                        console.log('ðŸŽ¯ Show authorization called');
+                        console.log('🎯 Show authorization called');
                         return t.popup({
                             title: 'Authorize Activity Tracker',
                             url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?mode=authorize',
@@ -1317,9 +1317,9 @@
                     },
                     
                     'on-enable': function(t, options) {
-                        console.log('ðŸŽ¯ On-enable called');
+                        console.log('🎯 On-enable called');
                         return t.alert({
-                            message: 'ðŸŽ‰ Activity Tracker enabled! Look for the "Activity Tracker" button in your board menu.',
+                            message: '🎉 Activity Tracker enabled! Look for the "Activity Tracker" button in your board menu.',
                             duration: 5
                         });
                     }
