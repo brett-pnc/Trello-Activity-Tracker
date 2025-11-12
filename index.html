@@ -284,7 +284,7 @@
                         </div>
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
                         <div style="display: flex; flex-direction: column;">
                             <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">User Filter</label>
                             <select id="userFilter" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;">
@@ -293,8 +293,26 @@
                         </div>
                         
                         <div style="display: flex; flex-direction: column;">
-                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Export</label>
-                            <button id="exportCSV" style="padding: 8px 12px; background: #61bd4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; align-self: start;" disabled>Export CSV</button>
+                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Sort Order</label>
+                            <select id="sortDirection" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;">
+                                <option value="asc">Oldest First</option>
+                                <option value="desc">Newest First</option>
+                            </select>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Options</label>
+                            <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0;">
+                                <input type="checkbox" id="hideAutomation" style="width: 18px; height: 18px; accent-color: #0079bf; cursor: pointer;">
+                                <label for="hideAutomation" style="font-size: 14px; color: #172b4d; cursor: pointer;">Hide Automation</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-weight: 500; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Export</label>
+                            <button id="exportCSV" style="padding: 8px 16px; background: #61bd4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;" disabled>Export to CSV</button>
                         </div>
                     </div>
                     
@@ -398,6 +416,30 @@
                 userFilter.addEventListener('change', (e) => {
                     selectedUserId = e.target.value;
                     console.log('👤 User filter changed to:', selectedUserId || 'All users');
+                    if (currentActivities.length > 0) {
+                        displayFilteredActivities();
+                    }
+                });
+            }
+            
+            // Sort direction change
+            const sortDirectionSelect = document.getElementById('sortDirection');
+            if (sortDirectionSelect) {
+                sortDirectionSelect.addEventListener('change', (e) => {
+                    sortDirection = e.target.value;
+                    console.log('🔄 Sort direction changed to:', sortDirection);
+                    if (currentActivities.length > 0) {
+                        displayFilteredActivities();
+                    }
+                });
+            }
+            
+            // Hide automation toggle
+            const hideAutomationCheckbox = document.getElementById('hideAutomation');
+            if (hideAutomationCheckbox) {
+                hideAutomationCheckbox.addEventListener('change', (e) => {
+                    hideAutomation = e.target.checked;
+                    console.log('🤖 Hide automation:', hideAutomation);
                     if (currentActivities.length > 0) {
                         displayFilteredActivities();
                     }
@@ -864,10 +906,55 @@
                 );
             }
             
-            console.log(`🔍 Filtered to ${filteredActivities.length} activities from ${selectedActivityTypes.size} selected types and user filter: ${selectedUserId || 'all'}`);
             
+            // Apply automation filter
+            if (hideAutomation) {
+                filteredActivities = filteredActivities.filter(activity => 
+                    !isAutomationActivity(activity)
+                );
+            }
+            
+            // Apply sorting
+            filteredActivities.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+            });
+            
+            console.log(`🔍 Filtered to ${filteredActivities.length} activities (types: ${selectedActivityTypes.size}, user: ${selectedUserId || 'all'}, hideAuto: ${hideAutomation}, sort: ${sortDirection})`);
             displayStats(filteredActivities);
             displayActivitiesList(filteredActivities);
+        }
+        
+        function isAutomationActivity(activity) {
+            // Method 1: Check for Butler username patterns
+            const user = activity.memberCreator;
+            if (!user) return true; // No creator = likely automation
+            
+            const username = (user.username || '').toLowerCase();
+            const fullName = (user.fullName || '').toLowerCase();
+            
+            // Known Butler/automation patterns
+            if (username.includes('butler') || fullName.includes('butler')) return true;
+            if (username.includes('automation') || fullName.includes('automation')) return true;
+            if (username.includes('bot') || fullName.includes('bot')) return true;
+            
+            // Method 2: Known automation user IDs (Butler's ID)
+            const knownAutomationIds = [
+                '5c8d890e6b4e5a7b1d2e3f4a', // Butler
+                '5c8d890e6b4e5a7b1d2e3f4b'  // Example automation ID
+            ];
+            if (user.id && knownAutomationIds.includes(user.id)) return true;
+            
+            // Method 3: Check for automation indicators in activity data
+            // Butler activities often have specific patterns
+            if (activity.type === 'updateCard' && activity.data && activity.data.card) {
+                // Check if description mentions automation
+                const cardDesc = (activity.data.card.desc || '').toLowerCase();
+                if (cardDesc.includes('automated by butler')) return true;
+            }
+            
+            return false;
         }
         
         function displayStats(activities) {
@@ -902,7 +989,6 @@
                 </div>
             `;
         }
-        
         function displayActivitiesList(activities) {
             const listContainer = document.getElementById('activitiesList');
             if (!listContainer) return;
@@ -918,36 +1004,136 @@
                 return;
             }
             
-            const activitiesHtml = activities.map(activity => {
+            let currentDate = null;
+            const activitiesHtml = [];
+            
+            activities.forEach(activity => {
+                const activityDate = new Date(activity.date);
+                const dateStr = activityDate.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                
+                if (dateStr !== currentDate) {
+                    currentDate = dateStr;
+                    activitiesHtml.push(`
+                        <div style="padding: 12px 16px; margin: 24px 0 12px 0; background: linear-gradient(135deg, #0079bf, #005a8b); color: white; border-radius: 6px; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            📅 ${dateStr}
+                        </div>
+                    `);
+                }
+                
                 const type = activityTypes[activity.type] || activityTypes.default;
                 const date = new Date(activity.date);
-                const timeAgo = getTimeAgo(date);
+                const timeStr = date.toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
                 const description = getActivityDescription(activity);
                 const user = activity.memberCreator;
                 const userName = user ? `@${user.username || user.fullName}` : 'Unknown User';
                 const userInitials = user ? (user.initials || user.fullName.substring(0, 2).toUpperCase()) : '?';
                 
-                return `
+                const labels = getCardLabels(activity);
+                const labelsHtml = labels.length > 0 ? `
+                    <div style="display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap;">
+                        ${labels.map(label => `
+                            <span style="display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 500; background: ${label.color || '#dfe1e6'}; color: ${label.textColor || '#172b4d'};">
+                                ${label.name || 'Unlabeled'}
+                            </span>
+                        `).join('')}
+                    </div>
+                ` : '';
+                
+                activitiesHtml.push(`
                     <div style="display: flex; align-items: flex-start; padding: 16px; margin-bottom: 12px; background: white; border: 1px solid #dfe1e6; border-radius: 8px; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
                         <div style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 14px; font-weight: bold; color: white; flex-shrink: 0;" class="${type.class}">
                             ${type.icon}
                         </div>
                         <div style="flex-grow: 1;">
                             <p style="font-size: 14px; line-height: 1.4; margin: 0 0 4px 0;"><strong style="color: #0079bf;">${userName}</strong> ${description}</p>
-                            <div style="font-size: 12px; color: #5e6c84; display: flex; gap: 16px;">
+                            <div style="font-size: 12px; color: #5e6c84; display: flex; gap: 16px; flex-wrap: wrap;">
                                 <span style="font-weight: 500;">${activity.boardName}</span>
-                                <span>${timeAgo}</span>
+                                <span>🕐 ${timeStr}</span>
                                 <span>${type.name}</span>
                             </div>
+                            ${labelsHtml}
                         </div>
                         <div style="width: 32px; height: 32px; border-radius: 50%; background: #dfe1e6; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #5e6c84; flex-shrink: 0; margin-left: 8px;">
                             ${userInitials}
                         </div>
                     </div>
-                `;
-            }).join('');
+                `);
+            });
             
-            listContainer.innerHTML = activitiesHtml;
+            listContainer.innerHTML = activitiesHtml.join('');
+        }
+        
+        function getCardLabels(activity) {
+            const labels = [];
+            
+            if (activity.data && activity.data.card && activity.data.card.labels) {
+                return activity.data.card.labels.map(label => ({
+                    name: label.name || 'Unlabeled',
+                    color: label.color || '#dfe1e6',
+                    textColor: getTextColorForBackground(label.color)
+                }));
+            }
+            
+            if (activity.type === 'addLabelToCard' && activity.data && activity.data.label) {
+                labels.push({
+                    name: activity.data.label.name || 'Unlabeled',
+                    color: activity.data.label.color || '#dfe1e6',
+                    textColor: getTextColorForBackground(activity.data.label.color)
+                });
+            }
+            
+            return labels;
+        }
+        
+        function getTextColorForBackground(backgroundColor) {
+            const darkBgColors = ['green', 'blue', 'purple', 'red', 'black', 'sky', 'pink', 'lime'];
+            if (!backgroundColor) return '#172b4d';
+            
+            const color = backgroundColor.toLowerCase();
+            return darkBgColors.includes(color) ? '#ffffff' : '#172b4d';
+        }
+
+        
+        function getCardLabels(activity) {
+            const labels = [];
+            
+            // Try to get labels from card data
+            if (activity.data && activity.data.card && activity.data.card.labels) {
+                return activity.data.card.labels.map(label => ({
+                    name: label.name || 'Unlabeled',
+                    color: label.color || '#dfe1e6',
+                    textColor: getTextColorForBackground(label.color)
+                }));
+            }
+            
+            // Try to get label from addLabelToCard action
+            if (activity.type === 'addLabelToCard' && activity.data && activity.data.label) {
+                labels.push({
+                    name: activity.data.label.name || 'Unlabeled',
+                    color: activity.data.label.color || '#dfe1e6',
+                    textColor: getTextColorForBackground(activity.data.label.color)
+                });
+            }
+            
+            return labels;
+        }
+        
+        function getTextColorForBackground(backgroundColor) {
+            // Map Trello label colors to appropriate text colors
+            const darkBgColors = ['green', 'blue', 'purple', 'red', 'black', 'sky', 'pink', 'lime'];
+            if (!backgroundColor) return '#172b4d';
+            
+            const color = backgroundColor.toLowerCase();
+            return darkBgColors.includes(color) ? '#ffffff' : '#172b4d';
         }
         
         function getActivityDescription(activity) {
