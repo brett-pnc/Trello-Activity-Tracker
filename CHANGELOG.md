@@ -1,5 +1,24 @@
 # Activity Tracker Changelog
 
+## v1.0.1 - November 12, 2024
+
+### Fixed
+- **Arrow icons** now display correctly (▶ ▼ instead of â–¶ â–¼)
+- **Search icon** in loading state now shows correct refresh icon (🔄 instead of 🔍•)
+- All emoji and Unicode symbols validated and corrected
+
+### Changed
+- **UI Reorganization**: Moved "Activity Types" filter into Filters section as a collapsible subsection
+- **Default collapsed state**: Date Selection, Filters, Quick Date Selection, and Activity Types now collapsed on load for cleaner UI
+- **Improved UX**: Users can expand sections as needed, reducing initial visual clutter
+
+### Technical
+- Fixed 10 icon corruptions using byte-level replacements
+- Updated toggleSection function to handle flex display for quickDateContent
+- Simplified showActivityTypeFilter function to work with new nested structure
+
+---
+
 ## v1.0.0 - November 12, 2024
 
 ### Fixed
