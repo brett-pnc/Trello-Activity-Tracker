@@ -106,7 +106,7 @@
             <h3>📋 Features Available</h3>
             <div class="step">📅 Date range selection (up to 31 days)</div>
             <div class="step">🎯 Board-specific filtering</div>
-            <div class="step">🔍 Activity type filtering with checkboxes</div>
+            <div class="step">🔍 Activity type filtering with checkboxes</div>
             <div class="step">📊 Real-time statistics and summaries</div>
             <div class="step">📱 Responsive design for all devices</div>
         </div>
@@ -715,7 +715,7 @@
                         const testResponse = await fetch(testUrl);
                         if (testResponse.ok) {
                             const testActivities = await testResponse.json();
-                            console.log(`🔍 Test: Board has ${testActivities.length} total recent activities`);
+                            console.log(`🔍 Test: Board has ${testActivities.length} total recent activities`);
                             if (testActivities.length > 0) {
                                 console.log(`📅 Latest activity date:`, testActivities[0].date);
                                 console.log(`👤 Latest activity by:`, testActivities[0].memberCreator?.fullName);
@@ -750,7 +750,7 @@
                 // Show helpful message if no activities found
                 resultsDiv.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #5e6c84; background: white; border-radius: 8px; border: 1px solid #dfe1e6;">
-                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">🔍</div>
+                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">🔍</div>
                         <h3>No Activities Found</h3>
                         <p>No activities were found for the selected date range (${startDate} to ${endDate}).</p>
                         <p style="font-size: 14px; color: #5e6c84; margin-top: 16px;">
