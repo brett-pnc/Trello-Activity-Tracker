@@ -247,75 +247,105 @@
             
             document.body.innerHTML = `
                 <div style="padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; width: 100%; max-width: 680px; margin: 0 auto;">
+                    <!-- Header with buttons -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #dfe1e6; padding-bottom: 15px;">
                         <h2 style="margin: 0; color: #172b4d;">📊 Activity Tracker</h2>
-                        <button id="loadActivities" style="padding: 10px 20px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">Load Activities</button>
-                    </div>
-                    
-                    <!-- Date Shortcuts -->
-                    <div style="margin-bottom: 16px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
-                        <label style="font-weight: 500; margin-bottom: 8px; color: #5e6c84; font-size: 12px; text-transform: uppercase; display: block;">Quick Date Selection</label>
-                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                            <button class="date-shortcut" data-days="0" style="padding: 6px 12px; background: white; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Today</button>
-                            <button class="date-shortcut" data-days="1" style="padding: 6px 12px; background: white; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Yesterday</button>
-                            <button class="date-shortcut" data-days="7" style="padding: 6px 12px; background: white; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Last 7 Days</button>
-                            <button class="date-shortcut" data-days="14" style="padding: 6px 12px; background: white; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Last 14 Days</button>
-                            <button class="date-shortcut" data-days="30" style="padding: 6px 12px; background: white; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Last 30 Days</button>
-                            <button class="date-shortcut" data-days="31" style="padding: 6px 12px; background: white; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Last 31 Days</button>
+                        <div style="display: flex; gap: 8px;">
+                            <button id="exportCSV" style="padding: 10px 20px; background: #61bd4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;" disabled>Export CSV</button>
+                            <button id="loadActivities" style="padding: 10px 20px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">Load Activities</button>
                         </div>
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
-                        <div style="display: flex; flex-direction: column;">
-                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Start Date</label>
-                            <input type="date" id="startDate" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;" />
+                    <!-- Date Selection (Collapsible) -->
+                    <div style="margin-bottom: 16px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6; overflow: hidden;">
+                        <div id="dateSelectionHeader" style="padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;" onclick="toggleSection('dateSelection')">
+                            <span style="font-weight: 600; color: #172b4d; font-size: 14px;">📅 Date Selection</span>
+                            <span id="dateSelectionToggle" style="font-size: 18px; color: #5e6c84;">▼</span>
                         </div>
-                        
-                        <div style="display: flex; flex-direction: column;">
-                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">End Date</label>
-                            <input type="date" id="endDate" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;" />
-                        </div>
-                        
-                        <div style="display: flex; flex-direction: column;">
-                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Board Filter</label>
-                            <select id="boardFilter" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;">
-                                <option value="">All Boards</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
-                        <div style="display: flex; flex-direction: column;">
-                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">User Filter</label>
-                            <select id="userFilter" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;">
-                                <option value="">All Users</option>
-                            </select>
-                        </div>
-                        
-                        <div style="display: flex; flex-direction: column;">
-                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Sort Order</label>
-                            <select id="sortDirection" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;">
-                                <option value="asc">Oldest First</option>
-                                <option value="desc">Newest First</option>
-                            </select>
-                        </div>
-                        
-                        <div style="display: flex; flex-direction: column;">
-                            <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Options</label>
-                            <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0;">
-                                <input type="checkbox" id="hideAutomation" style="width: 18px; height: 18px; accent-color: #0079bf; cursor: pointer;">
-                                <label for="hideAutomation" style="font-size: 14px; color: #172b4d; cursor: pointer;">Hide Automation</label>
+                        <div id="dateSelectionContent" style="padding: 16px; border-top: 1px solid #dfe1e6;">
+                            <!-- Quick Date Selection -->
+                            <div style="margin-bottom: 16px;">
+                                <div id="quickDateHeader" style="padding: 8px 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 4px; user-select: none;" onclick="toggleSection('quickDate')">
+                                    <span style="font-weight: 500; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Quick Selection</span>
+                                    <span id="quickDateToggle" style="font-size: 14px; color: #5e6c84;">▼</span>
+                                </div>
+                                <div id="quickDateContent" style="padding: 12px 0; display: flex; gap: 6px; flex-wrap: wrap;">
+                                    <button class="date-shortcut" data-days="0" style="padding: 6px 12px; background: white; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Today</button>
+                                    <button class="date-shortcut" data-days="1" style="padding: 6px 12px; background: white; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Yesterday</button>
+                                    <button class="date-shortcut" data-days="7" style="padding: 6px 12px; background: white; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Last 7 Days</button>
+                                    <button class="date-shortcut" data-days="14" style="padding: 6px 12px; background: white; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Last 14 Days</button>
+                                    <button class="date-shortcut" data-days="30" style="padding: 6px 12px; background: white; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Last 30 Days</button>
+                                    <button class="date-shortcut" data-days="31" style="padding: 6px 12px; background: white; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Last 31 Days</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Date Inputs -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Start Date</label>
+                                    <input type="date" id="startDate" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;" />
+                                </div>
+                                
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">End Date</label>
+                                    <input type="date" id="endDate" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;" />
+                                </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <label style="font-weight: 500; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Export</label>
-                            <button id="exportCSV" style="padding: 8px 16px; background: #61bd4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;" disabled>Export to CSV</button>
+                    <!-- Filters (Collapsible) -->
+                    <div style="margin-bottom: 16px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6; overflow: hidden;">
+                        <div id="filtersHeader" style="padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;" onclick="toggleSection('filters')">
+                            <span style="font-weight: 600; color: #172b4d; font-size: 14px;">🔍 Filters</span>
+                            <span id="filtersToggle" style="font-size: 18px; color: #5e6c84;">▼</span>
+                        </div>
+                        <div id="filtersContent" style="padding: 16px; border-top: 1px solid #dfe1e6;">
+                            <!-- Board, User, Sort, Hide Automation -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Board</label>
+                                    <select id="boardFilter" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;">
+                                        <option value="">All Boards</option>
+                                    </select>
+                                </div>
+                                
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">User</label>
+                                    <select id="userFilter" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;">
+                                        <option value="">All Users</option>
+                                    </select>
+                                </div>
+                                
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="font-weight: 500; margin-bottom: 6px; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Sort Order</label>
+                                    <select id="sortDirection" style="padding: 8px 12px; border: 2px solid #dfe1e6; border-radius: 4px; font-size: 14px; background: white; color: #172b4d;">
+                                        <option value="asc">Oldest First</option>
+                                        <option value="desc">Newest First</option>
+                                    </select>
+                                </div>
+                                
+                                <div style="display: flex; flex-direction: column; justify-content: flex-end;">
+                                    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0;">
+                                        <input type="checkbox" id="hideAutomation" style="width: 18px; height: 18px; accent-color: #0079bf; cursor: pointer;">
+                                        <label for="hideAutomation" style="font-size: 14px; color: #172b4d; cursor: pointer; user-select: none;">Hide Automation</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Activity Types -->
+                            <div id="activityTypeFilters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-bottom: 12px;">
+                                <!-- Activity type checkboxes will be inserted here -->
+                            </div>
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                <button id="selectAllTypes" style="padding: 4px 8px; background: #f4f5f7; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 11px;">All</button>
+                                <button id="selectNoneTypes" style="padding: 4px 8px; background: #f4f5f7; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 11px;">None</button>
+                                <button id="selectCommonTypes" style="padding: 4px 8px; background: #f4f5f7; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 11px;">Common</button>
+                            </div>
                         </div>
                     </div>
                     
+                    <!-- Results -->
                     <div id="activityResults" style="text-align: center; padding: 40px 20px; color: #5e6c84; background: white; border-radius: 8px; border: 1px solid #dfe1e6;">
                         <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">📅</div>
                         <h3>Ready to track your activities!</h3>
@@ -327,18 +357,32 @@
             setupOverlayEventListeners();
         }
         
+        function toggleSection(sectionId) {
+            const content = document.getElementById(sectionId + 'Content');
+            const toggle = document.getElementById(sectionId + 'Toggle');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                toggle.textContent = '▼';
+            } else {
+                content.style.display = 'none';
+                toggle.textContent = '▶';
+            }
+        }
+
+        
         // Global variables for activity tracking
         const activityTypes = {
             createCard: { icon: '📋', name: 'Card Created', class: 'type-card', common: true },
-            updateCard: { icon: '✏️', name: 'Card Updated', class: 'type-card', common: true },
+            updateCard: { icon: '✏', name: 'Card Updated', class: 'type-card', common: true },
             commentCard: { icon: '💬', name: 'Comment Added', class: 'type-comment', common: true },
             addAttachmentToCard: { icon: '📎', name: 'Attachment Added', class: 'type-attachment', common: false },
-            addChecklistToCard: { icon: '☑️', name: 'Checklist Added', class: 'type-checklist', common: false },
+            addChecklistToCard: { icon: '☑', name: 'Checklist Added', class: 'type-checklist', common: false },
             addMemberToCard: { icon: '👤', name: 'Member Added', class: 'type-member', common: false },
-            addLabelToCard: { icon: '🏷️', name: 'Label Added', class: 'type-label', common: false },
-            moveCard: { icon: '↔️', name: 'Card Moved', class: 'type-card', common: true },
-            deleteCard: { icon: '🗑️', name: 'Card Deleted', class: 'type-card', common: false },
-            removeLabelFromCard: { icon: '🏷️', name: 'Label Removed', class: 'type-label', common: false },
+            addLabelToCard: { icon: '🏷', name: 'Label Added', class: 'type-label', common: false },
+            moveCard: { icon: '↔', name: 'Card Moved', class: 'type-card', common: true },
+            deleteCard: { icon: '🗑', name: 'Card Deleted', class: 'type-card', common: false },
+            removeLabelFromCard: { icon: '🏷', name: 'Label Removed', class: 'type-label', common: false },
             removeMemberFromCard: { icon: '👤', name: 'Member Removed', class: 'type-member', common: false },
             updateCheckItemStateOnCard: { icon: '✅', name: 'Checklist Item Updated', class: 'type-checklist', common: false },
             createList: { icon: '📄', name: 'List Created', class: 'type-other', common: false },
@@ -403,6 +447,35 @@
             }
             
             // Close button - removed since we moved Load Activities to header
+            
+            
+            // Date shortcuts
+            document.querySelectorAll('.date-shortcut').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const days = parseInt(e.target.dataset.days);
+                    const end = new Date();
+                    const start = new Date();
+                    
+                    if (days === 0) {
+                        // Today
+                        start.setHours(0, 0, 0, 0);
+                    } else if (days === 1) {
+                        // Yesterday
+                        start.setDate(end.getDate() - 1);
+                        end.setDate(end.getDate() - 1);
+                        start.setHours(0, 0, 0, 0);
+                        end.setHours(23, 59, 59, 999);
+                    } else {
+                        // Last N days
+                        start.setDate(end.getDate() - days);
+                    }
+                    
+                    if (startInput) startInput.value = start.toISOString().split('T')[0];
+                    if (endInput) endInput.value = end.toISOString().split('T')[0];
+                    
+                    console.log(`📅 Date shortcut: ${days === 0 ? 'Today' : days === 1 ? 'Yesterday' : 'Last ' + days + ' days'}`);
+                });
+            });
             
             // Load activities button (now in header)
             const loadBtn = document.getElementById('loadActivities');
@@ -610,7 +683,7 @@
                                 console.log(`✅ Found ${boardActivities.length} activities with approach ${i + 1}`);
                                 break; // Success, stop trying other approaches
                             } else {
-                                console.log(`⚠️ No activities found with approach ${i + 1}, trying next...`);
+                                console.log(`⚠ No activities found with approach ${i + 1}, trying next...`);
                             }
                         } else {
                             const errorText = await response.text();
@@ -635,7 +708,7 @@
                         
                         allActivities = allActivities.concat(enrichedActivities);
                     } else {
-                        console.log(`⚠️ No activities found for ${board.name} in date range`);
+                        console.log(`⚠ No activities found for ${board.name} in date range`);
                         
                         // Try a broader search to see if there are ANY activities on this board
                         const testUrl = `https://api.trello.com/1/boards/${board.id}/actions?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&limit=10`;
@@ -1004,8 +1077,9 @@
                 return;
             }
             
-            let currentDate = null;
-            const activitiesHtml = [];
+            // Group activities by date
+            const dateGroups = {};
+            let dateKeys = [];
             
             activities.forEach(activity => {
                 const activityDate = new Date(activity.date);
@@ -1016,91 +1090,108 @@
                     day: 'numeric' 
                 });
                 
-                if (dateStr !== currentDate) {
-                    currentDate = dateStr;
+                if (!dateGroups[dateStr]) {
+                    dateGroups[dateStr] = [];
+                    dateKeys.push(dateStr);
+                }
+                dateGroups[dateStr].push(activity);
+            });
+            
+            // Build HTML with collapsible date headers
+            const activitiesHtml = [];
+            
+            dateKeys.forEach((dateStr, idx) => {
+                const dateId = 'date-' + idx;
+                const count = dateGroups[dateStr].length;
+                
+                // Collapsible date header
+                activitiesHtml.push(`
+                    <div style="padding: 12px 16px; margin: 24px 0 12px 0; background: linear-gradient(135deg, #0079bf, #005a8b); color: white; border-radius: 6px; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center;" onclick="toggleDateGroup('${dateId}')">
+                        <span>📅 ${dateStr}</span>
+                        <span style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 12px; opacity: 0.9;">(${count} ${count === 1 ? 'activity' : 'activities'})</span>
+                            <span id="${dateId}-toggle" style="font-size: 18px;">▼</span>
+                        </span>
+                    </div>
+                    <div id="${dateId}-content" style="display: block;">
+                `);
+                
+                // Activities for this date
+                dateGroups[dateStr].forEach(activity => {
+                    const type = activityTypes[activity.type] || activityTypes.default;
+                    const date = new Date(activity.date);
+                    const timeStr = date.toLocaleTimeString('en-US', { 
+                        hour: 'numeric', 
+                        minute: '2-digit',
+                        hour12: true 
+                    });
+                    const description = getActivityDescription(activity);
+                    const user = activity.memberCreator;
+                    const userName = user ? `@${user.username || user.fullName}` : 'Unknown User';
+                    const userInitials = user ? (user.initials || user.fullName.substring(0, 2).toUpperCase()) : '?';
+                    
+                    // Check if automated
+                    const isAutomated = isAutomationActivity(activity);
+                    const automationBadge = isAutomated ? `
+                        <span style="display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; background: #c377e0; color: white; margin-left: 8px;">
+                            🤖 AUTO
+                        </span>
+                    ` : '';
+                    
+                    // Extract card labels if available
+                    const labels = getCardLabels(activity);
+                    const labelsHtml = labels.length > 0 ? `
+                        <div style="display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap;">
+                            ${labels.map(label => `
+                                <span style="display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 500; background: ${label.color || '#dfe1e6'}; color: ${label.textColor || '#172b4d'};">
+                                    ${label.name || 'Unlabeled'}
+                                </span>
+                            `).join('')}
+                        </div>
+                    ` : '';
+                    
                     activitiesHtml.push(`
-                        <div style="padding: 12px 16px; margin: 24px 0 12px 0; background: linear-gradient(135deg, #0079bf, #005a8b); color: white; border-radius: 6px; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            📅 ${dateStr}
+                        <div style="display: flex; align-items: flex-start; padding: 16px; margin-bottom: 12px; background: white; border: 1px solid #dfe1e6; border-radius: 8px; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 14px; font-weight: bold; color: white; flex-shrink: 0;" class="${type.class}">
+                                ${type.icon}
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <p style="font-size: 14px; line-height: 1.4; margin: 0 0 4px 0;">
+                                    <strong style="color: #0079bf;">${userName}</strong>${automationBadge} ${description}
+                                </p>
+                                <div style="font-size: 12px; color: #5e6c84; display: flex; gap: 16px; flex-wrap: wrap;">
+                                    <span style="font-weight: 500;">${activity.boardName}</span>
+                                    <span>🕐 ${timeStr}</span>
+                                    <span>${type.name}</span>
+                                </div>
+                                ${labelsHtml}
+                            </div>
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #dfe1e6; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #5e6c84; flex-shrink: 0; margin-left: 8px;">
+                                ${userInitials}
+                            </div>
                         </div>
                     `);
-                }
-                
-                const type = activityTypes[activity.type] || activityTypes.default;
-                const date = new Date(activity.date);
-                const timeStr = date.toLocaleTimeString('en-US', { 
-                    hour: 'numeric', 
-                    minute: '2-digit',
-                    hour12: true 
                 });
-                const description = getActivityDescription(activity);
-                const user = activity.memberCreator;
-                const userName = user ? `@${user.username || user.fullName}` : 'Unknown User';
-                const userInitials = user ? (user.initials || user.fullName.substring(0, 2).toUpperCase()) : '?';
                 
-                const labels = getCardLabels(activity);
-                const labelsHtml = labels.length > 0 ? `
-                    <div style="display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap;">
-                        ${labels.map(label => `
-                            <span style="display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 500; background: ${label.color || '#dfe1e6'}; color: ${label.textColor || '#172b4d'};">
-                                ${label.name || 'Unlabeled'}
-                            </span>
-                        `).join('')}
-                    </div>
-                ` : '';
-                
-                activitiesHtml.push(`
-                    <div style="display: flex; align-items: flex-start; padding: 16px; margin-bottom: 12px; background: white; border: 1px solid #dfe1e6; border-radius: 8px; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
-                        <div style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 14px; font-weight: bold; color: white; flex-shrink: 0;" class="${type.class}">
-                            ${type.icon}
-                        </div>
-                        <div style="flex-grow: 1;">
-                            <p style="font-size: 14px; line-height: 1.4; margin: 0 0 4px 0;"><strong style="color: #0079bf;">${userName}</strong> ${description}</p>
-                            <div style="font-size: 12px; color: #5e6c84; display: flex; gap: 16px; flex-wrap: wrap;">
-                                <span style="font-weight: 500;">${activity.boardName}</span>
-                                <span>🕐 ${timeStr}</span>
-                                <span>${type.name}</span>
-                            </div>
-                            ${labelsHtml}
-                        </div>
-                        <div style="width: 32px; height: 32px; border-radius: 50%; background: #dfe1e6; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #5e6c84; flex-shrink: 0; margin-left: 8px;">
-                            ${userInitials}
-                        </div>
-                    </div>
-                `);
+                activitiesHtml.push('</div>');
             });
             
             listContainer.innerHTML = activitiesHtml.join('');
         }
         
-        function getCardLabels(activity) {
-            const labels = [];
+        function toggleDateGroup(dateId) {
+            const content = document.getElementById(dateId + '-content');
+            const toggle = document.getElementById(dateId + '-toggle');
             
-            if (activity.data && activity.data.card && activity.data.card.labels) {
-                return activity.data.card.labels.map(label => ({
-                    name: label.name || 'Unlabeled',
-                    color: label.color || '#dfe1e6',
-                    textColor: getTextColorForBackground(label.color)
-                }));
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                toggle.textContent = '▼';
+            } else {
+                content.style.display = 'none';
+                toggle.textContent = '▶';
             }
-            
-            if (activity.type === 'addLabelToCard' && activity.data && activity.data.label) {
-                labels.push({
-                    name: activity.data.label.name || 'Unlabeled',
-                    color: activity.data.label.color || '#dfe1e6',
-                    textColor: getTextColorForBackground(activity.data.label.color)
-                });
-            }
-            
-            return labels;
         }
-        
-        function getTextColorForBackground(backgroundColor) {
-            const darkBgColors = ['green', 'blue', 'purple', 'red', 'black', 'sky', 'pink', 'lime'];
-            if (!backgroundColor) return '#172b4d';
-            
-            const color = backgroundColor.toLowerCase();
-            return darkBgColors.includes(color) ? '#ffffff' : '#172b4d';
-        }
+
 
         
         function getCardLabels(activity) {
