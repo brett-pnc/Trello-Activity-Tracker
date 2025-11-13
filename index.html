@@ -132,42 +132,28 @@
             border-bottom: 1px solid #dfe1e6;
             border-radius: var(--border-radius);
             transition: all 0.15s;
+            border-left: 3px solid #838c91;
         }
         
         .activity-item:hover {
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 4px;
         }
         
         .activity-item.type-card-border {
-            border-left: 3px solid #61bd4f;
+            border-left-color: #61bd4f;
         }
         
         .activity-item.type-comment-border {
-            border-left: 3px solid #f2d600;
+            border-left-color: #f2d600;
         }
         
         .activity-item.type-attachment-border {
-            border-left: 3px solid #ff9f1a;
+            border-left-color: #ff9f1a;
         }
         
         .activity-item.type-other-border {
-            border-left: 3px solid #838c91;
-        }
-        
-        .activity-item:hover.type-card-border {
-            border-left-width: 4px;
-        }
-        
-        .activity-item:hover.type-comment-border {
-            border-left-width: 4px;
-        }
-        
-        .activity-item:hover.type-attachment-border {
-            border-left-width: 4px;
-        }
-        
-        .activity-item:hover.type-other-border {
-            border-left-width: 4px;
+            border-left-color: #838c91;
         }
         
         /* Activity Header */
@@ -235,6 +221,7 @@
             font-size: 13px;
             line-height: 1.3;
             color: #172b4d;
+            padding: 20px;
         }
         
         .activity-action strong {
