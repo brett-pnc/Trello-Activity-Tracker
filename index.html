@@ -124,20 +124,22 @@
         
         /* Activity Items */
         .activity-item {
-            padding: 12px 14px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             background: white;
             border-top: 1px solid #dfe1e6;
             border-right: 1px solid #dfe1e6;
             border-bottom: 1px solid #dfe1e6;
             border-radius: var(--border-radius);
+            overflow: hidden;
             transition: all 0.15s;
             border-left: 3px solid #838c91;
+            transform: scale(1);
         }
         
         .activity-item:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border-left: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            border-left-width: 4px;
+            transform: scale(1.05);
         }
         
         .activity-item.type-card-border {
@@ -161,14 +163,15 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 8px;
             font-size: 13px;
             color: #172b4d;
+            background: #dfe1e6;
         }
         
         .activity-header-content {
             flex: 1;
             line-height: 1.4;
+            padding: 5px;
         }
         
         .activity-header-content strong {
@@ -1743,11 +1746,11 @@
             
             // If we found specific changes, return them
             if (changes.length > 0) {
-                return `${changes.join(', ')} on "${cardName}"`;
+                return `${changes.join(', ')}`;
             }
             
             // Fallback to generic update
-            return `updated card "${cardName}"`;
+            return `updated card`;
         }
         
         function exportToCSV() {
