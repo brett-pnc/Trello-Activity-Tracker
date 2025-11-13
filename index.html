@@ -6,6 +6,9 @@
     <title>Activity Tracker Power-Up</title>
     <script src="https://p.trellocdn.com/power-up.min.js"></script>
     <style>
+        :root {
+            --border-radius: 8px;
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
@@ -18,7 +21,7 @@
             max-width: 600px;
             margin: 50px auto;
             background: white;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             padding: 40px;
             text-align: center;
@@ -41,7 +44,7 @@
         .instructions {
             background: #f8f9fa;
             border: 1px solid #dfe1e6;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             padding: 24px;
             margin: 24px 0;
             text-align: left;
@@ -88,7 +91,7 @@
             margin: 24px 0 12px 0;
             background: linear-gradient(135deg, #0079bf, #005a8b);
             color: white;
-            border-radius: 6px;
+            border-radius: var(--border-radius);
             font-weight: 600;
             font-size: 14px;
             text-transform: uppercase;
@@ -127,7 +130,7 @@
             border-top: 1px solid #dfe1e6;
             border-right: 1px solid #dfe1e6;
             border-bottom: 1px solid #dfe1e6;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             transition: all 0.15s;
         }
         
@@ -195,9 +198,9 @@
             background: #5e6c84;
             color: white;
             padding: 4px 8px;
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 700;
-            border-radius: 0 0 0 6px;
+            border-bottom-left-radius: var(--border-radius);
             margin-left: 12px;
             white-space: nowrap;
         }
@@ -211,7 +214,7 @@
         .activity-icon {
             width: 28px;
             height: 28px;
-            border-radius: 50%;
+            border-bottom-right-radius: var(--border-radius);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -379,7 +382,7 @@
             console.log('💧 Loading authorization mode...');
             
             document.body.innerHTML = `
-                <div style="padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 500px; margin: 0 auto;">
+                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 500px; margin: 0 auto;">
                     <div style="text-align: center; padding: 40px 20px;">
                         <div style="font-size: 64px; margin-bottom: 20px;">💐</div>
                         <h2 style="margin: 0 0 16px 0; color: #172b4d;">Authorize Activity Tracker</h2>
@@ -1532,6 +1535,9 @@
                         <div class="activity-item ${borderClass}">
                             <!-- Header line with card/board and time -->
                             <div class="activity-header">
+                                <div class="activity-icon ${type.class}">
+                                    ${type.icon}
+                                </div>
                                 <div class="activity-header-content">
                                     ${headerLine}
                                 </div>
@@ -1542,9 +1548,6 @@
                             
                             <!-- Activity content -->
                             <div class="activity-content">
-                                <div class="activity-icon ${type.class}">
-                                    ${type.icon}
-                                </div>
                                 <div class="activity-main">
                                     ${actionContent}
                                 </div>
