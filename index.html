@@ -85,16 +85,16 @@
 </head>
 <body>
     <div class="container">
-        <div class="icon">📊</div>
+        <div class="icon">ðŸ“Š</div>
         <h1 class="title">Activity Tracker Power-Up</h1>
-        <div class="status">✅ Power-Up Active</div>
+        <div class="status">âœ… Power-Up Active</div>
         <p class="subtitle">
             Your Trello Activity Tracker Power-Up is installed and ready to use!
             This page serves as the Power-Up configuration and you can access the activity tracker through your Trello board.
         </p>
         
         <div class="instructions">
-            <h3>🚀 How to Use Your Activity Tracker</h3>
+            <h3>ðŸš€ How to Use Your Activity Tracker</h3>
             <div class="step">1. Look for the <strong>"Activity Tracker"</strong> button in your board's top menu</div>
             <div class="step">2. Click the button to open the activity tracker overlay</div>
             <div class="step">3. Select date ranges, filter by boards, and choose activity types</div>
@@ -103,12 +103,12 @@
         </div>
         
         <div class="instructions">
-            <h3>📋 Features Available</h3>
-            <div class="step">📅 Date range selection (up to 31 days)</div>
-            <div class="step">🎯 Board-specific filtering</div>
-            <div class="step">🔍 Activity type filtering with checkboxes</div>
-            <div class="step">📊 Real-time statistics and summaries</div>
-            <div class="step">📱 Responsive design for all devices</div>
+            <h3>ðŸ“‹ Features Available</h3>
+            <div class="step">ðŸ“… Date range selection (up to 31 days)</div>
+            <div class="step">ðŸŽ¯ Board-specific filtering</div>
+            <div class="step">ðŸ” Activity type filtering with checkboxes</div>
+            <div class="step">ðŸ“Š Real-time statistics and summaries</div>
+            <div class="step">ðŸ“± Responsive design for all devices</div>
         </div>
     </div>
 
@@ -130,12 +130,12 @@
         }
         
         function showAuthorizationInterface() {
-            console.log('🔧 Loading authorization mode...');
+            console.log('ðŸ”§ Loading authorization mode...');
             
             document.body.innerHTML = `
                 <div style="padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 500px; margin: 0 auto;">
                     <div style="text-align: center; padding: 40px 20px;">
-                        <div style="font-size: 64px; margin-bottom: 20px;">🔐</div>
+                        <div style="font-size: 64px; margin-bottom: 20px;">ðŸ”</div>
                         <h2 style="margin: 0 0 16px 0; color: #172b4d;">Authorize Activity Tracker</h2>
                         <p style="color: #5e6c84; margin-bottom: 32px; line-height: 1.5;">
                             To track your Trello activities, we need permission to read your boards and activities. 
@@ -145,15 +145,15 @@
                         <div style="background: #f8f9fa; border: 1px solid #dfe1e6; border-radius: 8px; padding: 20px; margin-bottom: 32px; text-align: left;">
                             <h4 style="margin: 0 0 12px 0; color: #172b4d;">Permissions Needed:</h4>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                                <span style="color: #61bd4f; margin-right: 8px;">✓</span>
+                                <span style="color: #61bd4f; margin-right: 8px;">âœ“</span>
                                 <span style="font-size: 14px; color: #5e6c84;">Read your boards and activities</span>
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                                <span style="color: #eb5a46; margin-right: 8px;">✗</span>
+                                <span style="color: #eb5a46; margin-right: 8px;">âœ—</span>
                                 <span style="font-size: 14px; color: #5e6c84;">No write access to your boards</span>
                             </div>
                             <div style="display: flex; align-items: center;">
-                                <span style="color: #eb5a46; margin-right: 8px;">✗</span>
+                                <span style="color: #eb5a46; margin-right: 8px;">âœ—</span>
                                 <span style="font-size: 14px; color: #5e6c84;">No access to personal information</span>
                             </div>
                         </div>
@@ -199,7 +199,7 @@
                         if (token) {
                             authStatus.innerHTML = `
                                 <div style="padding: 16px; background: #e3fcef; border: 1px solid #61bd4f; border-radius: 4px; color: #006644;">
-                                    <strong>✅ Authorization Successful!</strong><br>
+                                    <strong>âœ… Authorization Successful!</strong><br>
                                     You can now close this window and use the Activity Tracker.
                                 </div>
                             `;
@@ -218,7 +218,7 @@
                         console.error('Authorization failed:', error);
                         authStatus.innerHTML = `
                             <div style="padding: 16px; background: #ffebe6; border: 1px solid #eb5a46; border-radius: 4px; color: #ae2e24;">
-                                <strong>❌ Authorization Failed</strong><br>
+                                <strong>âŒ Authorization Failed</strong><br>
                                 ${error.message || 'Please try again.'}
                             </div>
                         `;
@@ -243,14 +243,14 @@
         }
 
         function showOverlayInterface() {
-            console.log('🔧 Loading overlay mode...');
+            console.log('ðŸ”§ Loading overlay mode...');
             
             document.body.innerHTML = `
                 <div style="padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; width: 100%; max-width: 680px; margin: 0 auto;">
                     <!-- Header with buttons -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #dfe1e6; padding-bottom: 15px;">
                         <div>
-                            <h2 style="margin: 0; color: #172b4d;">📊 Activity Tracker <span style="font-size: 12px; color: #a5adba; font-weight: 400;">v1.0.2</span></h2>
+                            <h2 style="margin: 0; color: #172b4d;">ðŸ“Š Activity Tracker <span style="font-size: 12px; color: #a5adba; font-weight: 400;">v1.0.3</span></h2>
                         </div>
                         <div style="display: flex; gap: 8px;">
                             <button id="exportCSV" style="padding: 10px 20px; background: #61bd4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;" disabled>Export CSV</button>
@@ -261,15 +261,15 @@
                     <!-- Date Selection (Collapsible) -->
                     <div style="margin-bottom: 16px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6; overflow: hidden;">
                         <div id="dateSelectionHeader" style="padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;" onclick="toggleSection('dateSelection')">
-                            <span style="font-weight: 600; color: #172b4d; font-size: 14px;">📅 Date Selection</span>
-                            <span id="dateSelectionToggle" style="font-size: 18px; color: #5e6c84;">▶</span>
+                            <span style="font-weight: 600; color: #172b4d; font-size: 14px;">ðŸ“… Date Selection</span>
+                            <span id="dateSelectionToggle" style="font-size: 18px; color: #5e6c84;">â–¶</span>
                         </div>
                         <div id="dateSelectionContent" style="padding: 16px; border-top: 1px solid #dfe1e6; display: none;">
                             <!-- Quick Date Selection -->
                             <div style="margin-bottom: 16px;">
                                 <div id="quickDateHeader" style="padding: 8px 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 4px; user-select: none;" onclick="toggleSection('quickDate')">
                                     <span style="font-weight: 500; color: #5e6c84; font-size: 12px; text-transform: uppercase;">Quick Selection</span>
-                                    <span id="quickDateToggle" style="font-size: 14px; color: #5e6c84;">▶</span>
+                                    <span id="quickDateToggle" style="font-size: 14px; color: #5e6c84;">â–¶</span>
                                 </div>
                                 <div id="quickDateContent" style="padding: 12px 0; display: none; flex-wrap: wrap; gap: 6px;">
                                     <button class="date-shortcut" data-days="0" style="padding: 6px 12px; background: white; color: #5e6c84; border: 1px solid #dfe1e6; border-radius: 4px; cursor: pointer; font-size: 12px;">Today</button>
@@ -299,8 +299,8 @@
                     <!-- Filters (Collapsible) -->
                     <div style="margin-bottom: 16px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dfe1e6; overflow: hidden;">
                         <div id="filtersHeader" style="padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;" onclick="toggleSection('filters')">
-                            <span style="font-weight: 600; color: #172b4d; font-size: 14px;">🔍 Filters</span>
-                            <span id="filtersToggle" style="font-size: 18px; color: #5e6c84;">▶</span>
+                            <span style="font-weight: 600; color: #172b4d; font-size: 14px;">ðŸ” Filters</span>
+                            <span id="filtersToggle" style="font-size: 18px; color: #5e6c84;">â–¶</span>
                         </div>
                         <div id="filtersContent" style="padding: 16px; border-top: 1px solid #dfe1e6; display: none;">
                             <!-- Board, User, Sort, Hide Automation -->
@@ -339,7 +339,7 @@
                             <div style="margin-top: 16px; background: white; border-radius: 8px; border: 1px solid #dfe1e6; overflow: hidden;">
                                 <div id="activityTypesHeader" style="padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;" onclick="toggleSection('activityTypes')">
                                     <span style="font-weight: 500; color: #172b4d; font-size: 13px;">Activity Types</span>
-                                    <span id="activityTypesToggle" style="font-size: 16px; color: #5e6c84;">▶</span>
+                                    <span id="activityTypesToggle" style="font-size: 16px; color: #5e6c84;">â–¶</span>
                                 </div>
                                 <div id="activityTypesContent" style="padding: 12px 16px; border-top: 1px solid #dfe1e6; display: none;">
                                     <div id="activityTypeFilters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-bottom: 12px;">
@@ -357,7 +357,7 @@
                     
                     <!-- Results -->
                     <div id="activityResults" style="text-align: center; padding: 40px 20px; color: #5e6c84; background: white; border-radius: 8px; border: 1px solid #dfe1e6;">
-                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">📅</div>
+                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">ðŸ“…</div>
                         <h3>Ready to track your activities!</h3>
                         <p>Select your date range and click "Load Activities" to see your Trello activity data.</p>
                     </div>
@@ -374,37 +374,37 @@
             if (content.style.display === 'none') {
                 // Use flex for quickDate, block for others
                 content.style.display = sectionId === 'quickDate' ? 'flex' : 'block';
-                toggle.textContent = '▼';
+                toggle.textContent = 'â–¼';
             } else {
                 content.style.display = 'none';
-                toggle.textContent = '▶';
+                toggle.textContent = 'â–¶';
             }
         }
 
         
         // Global variables for activity tracking
         const activityTypes = {
-            createCard: { icon: '📋', name: 'Card Created', class: 'type-card', common: true },
-            updateCard: { icon: '✏️', name: 'Card Updated', class: 'type-card', common: true },
-            commentCard: { icon: '💬', name: 'Comment Added', class: 'type-comment', common: true },
-            addAttachmentToCard: { icon: '📎', name: 'Attachment Added', class: 'type-attachment', common: false },
-            addChecklistToCard: { icon: '☑', name: 'Checklist Added', class: 'type-checklist', common: false },
-            addMemberToCard: { icon: '👤', name: 'Member Added', class: 'type-member', common: false },
-            addLabelToCard: { icon: '🏷️', name: 'Label Added', class: 'type-label', common: false },
-            moveCard: { icon: '↔', name: 'Card Moved', class: 'type-card', common: true },
-            deleteCard: { icon: '🗑', name: 'Card Deleted', class: 'type-card', common: false },
-            removeLabelFromCard: { icon: '🏷️', name: 'Label Removed', class: 'type-label', common: false },
-            removeMemberFromCard: { icon: '👤', name: 'Member Removed', class: 'type-member', common: false },
-            updateCheckItemStateOnCard: { icon: '✅', name: 'Checklist Item Updated', class: 'type-checklist', common: false },
-            createList: { icon: '📄', name: 'List Created', class: 'type-other', common: false },
-            updateList: { icon: '📄', name: 'List Updated', class: 'type-other', common: false },
-            moveListFromBoard: { icon: '📄', name: 'List Moved', class: 'type-other', common: false },
-            copyCard: { icon: '📄', name: 'Card Copied', class: 'type-card', common: false },
-            convertToCardFromCheckItem: { icon: '📄', name: 'Checklist Item to Card', class: 'type-card', common: false },
-            addToOrganizationBoard: { icon: '🏢', name: 'Added to Organization', class: 'type-other', common: false },
-            removeFromOrganizationBoard: { icon: '🏢', name: 'Removed from Organization', class: 'type-other', common: false },
-            updateBoard: { icon: '📊', name: 'Board Updated', class: 'type-other', common: false },
-            default: { icon: '⚡', name: 'Other Activity', class: 'type-other', common: false }
+            createCard: { icon: 'ðŸ“‹', name: 'Card Created', class: 'type-card', common: true },
+            updateCard: { icon: 'âœï¸', name: 'Card Updated', class: 'type-card', common: true },
+            commentCard: { icon: 'ðŸ’¬', name: 'Comment Added', class: 'type-comment', common: true },
+            addAttachmentToCard: { icon: 'ðŸ“Ž', name: 'Attachment Added', class: 'type-attachment', common: false },
+            addChecklistToCard: { icon: 'â˜‘', name: 'Checklist Added', class: 'type-checklist', common: false },
+            addMemberToCard: { icon: 'ðŸ‘¤', name: 'Member Added', class: 'type-member', common: false },
+            addLabelToCard: { icon: 'ðŸ·ï¸', name: 'Label Added', class: 'type-label', common: false },
+            moveCard: { icon: 'â†”', name: 'Card Moved', class: 'type-card', common: true },
+            deleteCard: { icon: 'ðŸ—‘', name: 'Card Deleted', class: 'type-card', common: false },
+            removeLabelFromCard: { icon: 'ðŸ·ï¸', name: 'Label Removed', class: 'type-label', common: false },
+            removeMemberFromCard: { icon: 'ðŸ‘¤', name: 'Member Removed', class: 'type-member', common: false },
+            updateCheckItemStateOnCard: { icon: 'âœ…', name: 'Checklist Item Updated', class: 'type-checklist', common: false },
+            createList: { icon: 'ðŸ“„', name: 'List Created', class: 'type-other', common: false },
+            updateList: { icon: 'ðŸ“„', name: 'List Updated', class: 'type-other', common: false },
+            moveListFromBoard: { icon: 'ðŸ“„', name: 'List Moved', class: 'type-other', common: false },
+            copyCard: { icon: 'ðŸ“„', name: 'Card Copied', class: 'type-card', common: false },
+            convertToCardFromCheckItem: { icon: 'ðŸ“„', name: 'Checklist Item to Card', class: 'type-card', common: false },
+            addToOrganizationBoard: { icon: 'ðŸ¢', name: 'Added to Organization', class: 'type-other', common: false },
+            removeFromOrganizationBoard: { icon: 'ðŸ¢', name: 'Removed from Organization', class: 'type-other', common: false },
+            updateBoard: { icon: 'ðŸ“Š', name: 'Board Updated', class: 'type-other', common: false },
+            default: { icon: 'âš¡', name: 'Other Activity', class: 'type-other', common: false }
         };
         
         let allBoards = [];
@@ -484,7 +484,7 @@
                     if (startInput) startInput.value = start.toISOString().split('T')[0];
                     if (endInput) endInput.value = end.toISOString().split('T')[0];
                     
-                    console.log(`📅 Date shortcut: ${days === 0 ? 'Today' : days === 1 ? 'Yesterday' : 'Last ' + days + ' days'}`);
+                    console.log(`ðŸ“… Date shortcut: ${days === 0 ? 'Today' : days === 1 ? 'Yesterday' : 'Last ' + days + ' days'}`);
                 });
             });
             
@@ -499,7 +499,7 @@
             if (userFilter) {
                 userFilter.addEventListener('change', (e) => {
                     selectedUserId = e.target.value;
-                    console.log('👤 User filter changed to:', selectedUserId || 'All users');
+                    console.log('ðŸ‘¤ User filter changed to:', selectedUserId || 'All users');
                     if (currentActivities.length > 0) {
                         displayFilteredActivities();
                     }
@@ -511,7 +511,7 @@
             if (sortDirectionSelect) {
                 sortDirectionSelect.addEventListener('change', (e) => {
                     sortDirection = e.target.value;
-                    console.log('🔄 Sort direction changed to:', sortDirection);
+                    console.log('ðŸ”„ Sort direction changed to:', sortDirection);
                     if (currentActivities.length > 0) {
                         displayFilteredActivities();
                     }
@@ -521,7 +521,7 @@
             // Hide automation toggle
             const hideAutomationCheckbox = document.getElementById('hideAutomation');
             if (hideAutomationCheckbox) {
-                console.log('✅ Hide Automation checkbox found and event listener attached');
+                console.log('âœ… Hide Automation checkbox found and event listener attached');
                 hideAutomationCheckbox.addEventListener('change', (e) => {
                     hideAutomation = e.target.checked;
                     console.log('🤖 Hide automation changed to:', hideAutomation);
@@ -529,11 +529,11 @@
                     if (currentActivities.length > 0) {
                         displayFilteredActivities();
                     } else {
-                        console.log('⚠️  No activities loaded yet, filter will apply when activities are loaded');
+                        console.log('âš ï¸  No activities loaded yet, filter will apply when activities are loaded');
                     }
                 });
             } else {
-                console.error('❌ Hide Automation checkbox not found!');
+                console.error('âŒ Hide Automation checkbox not found!');
             }
             
             // Export CSV button
@@ -553,7 +553,7 @@
             loadBtn.textContent = 'Loading...';
             
             try {
-                console.log('🔧 Starting real activity loading...');
+                console.log('ðŸ”§ Starting real activity loading...');
                 
                 const t = window.TrelloPowerUp.iframe({
                     appKey: 'caeeec29db6d299bd3b65e9743854d5d',
@@ -568,7 +568,7 @@
                     // Show authorization UI if no token
                     resultsDiv.innerHTML = `
                         <div style="text-align: center; padding: 40px; color: #0079bf;">
-                            <div style="font-size: 32px; margin-bottom: 16px;">🔐</div>
+                            <div style="font-size: 32px; margin-bottom: 16px;">ðŸ”</div>
                             <h3>Authorization Required</h3>
                             <p>Please authorize the Activity Tracker to access your Trello data.</p>
                             <button id="authorizeBtn" style="margin-top: 15px; padding: 12px 24px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">Authorize Access</button>
@@ -596,7 +596,7 @@
                                 console.error('Authorization failed:', authError);
                                 resultsDiv.innerHTML = `
                                     <div style="text-align: center; padding: 40px; color: #eb5a46;">
-                                        <div style="font-size: 32px; margin-bottom: 16px;">❌</div>
+                                        <div style="font-size: 32px; margin-bottom: 16px;">âŒ</div>
                                         <h3>Authorization Failed</h3>
                                         <p>${authError.message}</p>
                                         <button onclick="loadRealActivities()" style="margin-top: 15px; padding: 8px 16px; background: #0079bf; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>
@@ -615,10 +615,10 @@
                 await continueLoadingActivities(token, resultsDiv);
                 
             } catch (error) {
-                console.error('❌ Error loading activities:', error);
+                console.error('âŒ Error loading activities:', error);
                 resultsDiv.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #eb5a46;">
-                        <div style="font-size: 32px; margin-bottom: 16px;">❌</div>
+                        <div style="font-size: 32px; margin-bottom: 16px;">âŒ</div>
                         <h3>Error Loading Activities</h3>
                         <p>Failed to load your Trello activities.</p>
                         <p style="font-size: 14px; color: #5e6c84; margin-top: 10px;">Error: ${error.message}</p>
@@ -637,12 +637,12 @@
             const endDate = document.getElementById('endDate').value;
             const selectedBoardId = document.getElementById('boardFilter').value;
             
-            console.log('📅 Date range:', startDate, 'to', endDate);
-            console.log('📋 Selected board ID:', selectedBoardId || 'All boards');
+            console.log('ðŸ“… Date range:', startDate, 'to', endDate);
+            console.log('ðŸ“‹ Selected board ID:', selectedBoardId || 'All boards');
             
             resultsDiv.innerHTML = `
                 <div style="text-align: center; padding: 40px; color: #5e6c84;">
-                    <div style="font-size: 32px; margin-bottom: 16px;">🔄</div>
+                    <div style="font-size: 32px; margin-bottom: 16px;">ðŸ”„</div>
                     <h3>Loading Activities...</h3>
                     <p>Fetching your Trello activities for ${startDate} to ${endDate}</p>
                 </div>
@@ -650,7 +650,7 @@
             
             // Load boards first if not already loaded
             if (allBoards.length === 0) {
-                console.log('📋 Loading boards...');
+                console.log('ðŸ“‹ Loading boards...');
                 await loadBoards(token);
             }
             
@@ -659,52 +659,52 @@
                 allBoards.filter(board => board.id === selectedBoardId) : 
                 allBoards;
             
-            console.log('📋 Querying', boardsToQuery.length, 'boards:', boardsToQuery.map(b => b.name));
+            console.log('ðŸ“‹ Querying', boardsToQuery.length, 'boards:', boardsToQuery.map(b => b.name));
             
             let allActivities = [];
             
             // Fetch activities from each board
             for (const board of boardsToQuery) {
                 try {
-                    console.log(`📋 Loading activities from: ${board.name} (${board.id})`);
+                    console.log(`ðŸ“‹ Loading activities from: ${board.name} (${board.id})`);
                     
                     // Create date objects for proper formatting
                     const startDateTime = new Date(startDate + 'T00:00:00Z').toISOString();
                     const endDateTime = new Date(endDate + 'T23:59:59Z').toISOString();
                     
-                    console.log(`📅 API date range: ${startDateTime} to ${endDateTime}`);
+                    console.log(`ðŸ“… API date range: ${startDateTime} to ${endDateTime}`);
                     
                     // Fetch all board actions (member=me parameter causes 400 error)
                     const url = `https://api.trello.com/1/boards/${board.id}/actions?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&since=${startDateTime}&before=${endDateTime}&limit=1000`;
                     
-                    console.log(`🔄 Fetching activities:`, url);
+                    console.log(`ðŸ”„ Fetching activities:`, url);
                     
                     let boardActivities = [];
                     
                     try {
                         const response = await fetch(url);
-                        console.log(`📡 Response status:`, response.status);
+                        console.log(`ðŸ“¡ Response status:`, response.status);
                         
                         if (response.ok) {
                             boardActivities = await response.json();
-                            console.log(`📊 Raw response length:`, boardActivities.length);
+                            console.log(`ðŸ“Š Raw response length:`, boardActivities.length);
                             
                             if (boardActivities.length > 0) {
-                                console.log(`✅ Found ${boardActivities.length} activities`);
+                                console.log(`âœ… Found ${boardActivities.length} activities`);
                             } else {
-                                console.log(`⚠️ No activities found in date range`);
+                                console.log(`âš ï¸ No activities found in date range`);
                             }
                         } else {
                             const errorText = await response.text();
-                            console.warn(`❌ API error:`, response.status, errorText);
+                            console.warn(`âŒ API error:`, response.status, errorText);
                         }
                     } catch (fetchError) {
-                        console.error(`❌ Fetch error:`, fetchError);
+                        console.error(`âŒ Fetch error:`, fetchError);
                     }
                     
                     if (boardActivities.length > 0) {
-                        console.log(`✅ Final result: ${boardActivities.length} activities from ${board.name}`);
-                        console.log(`📋 Sample activities:`, boardActivities.slice(0, 3).map(a => ({
+                        console.log(`âœ… Final result: ${boardActivities.length} activities from ${board.name}`);
+                        console.log(`ðŸ“‹ Sample activities:`, boardActivities.slice(0, 3).map(a => ({
                             type: a.type,
                             date: a.date,
                             memberCreator: a.memberCreator?.fullName
@@ -719,34 +719,34 @@
                         
                         allActivities = allActivities.concat(enrichedActivities);
                     } else {
-                        console.log(`⚠️ No activities found for ${board.name} in date range`);
+                        console.log(`âš ï¸ No activities found for ${board.name} in date range`);
                         
                         // Try a broader search to see if there are ANY activities on this board
                         const testUrl = `https://api.trello.com/1/boards/${board.id}/actions?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&limit=10`;
                         const testResponse = await fetch(testUrl);
                         if (testResponse.ok) {
                             const testActivities = await testResponse.json();
-                            console.log(`🔍 Test: Board has ${testActivities.length} total recent activities`);
+                            console.log(`ðŸ” Test: Board has ${testActivities.length} total recent activities`);
                             if (testActivities.length > 0) {
-                                console.log(`📅 Latest activity date:`, testActivities[0].date);
-                                console.log(`👤 Latest activity by:`, testActivities[0].memberCreator?.fullName);
+                                console.log(`ðŸ“… Latest activity date:`, testActivities[0].date);
+                                console.log(`ðŸ‘¤ Latest activity by:`, testActivities[0].memberCreator?.fullName);
                             }
                         }
                     }
                     
                 } catch (error) {
-                    console.error(`❌ Error loading activities from ${board.name}:`, error);
+                    console.error(`âŒ Error loading activities from ${board.name}:`, error);
                 }
             }
             
             // Sort activities by date (newest first)
             allActivities.sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            console.log(`🎉 FINAL RESULT: ${allActivities.length} total activities loaded`);
+            console.log(`ðŸŽ‰ FINAL RESULT: ${allActivities.length} total activities loaded`);
             
             if (allActivities.length > 0) {
-                console.log(`📊 Activity types found:`, [...new Set(allActivities.map(a => a.type))]);
-                console.log(`📅 Date range of activities:`, {
+                console.log(`ðŸ“Š Activity types found:`, [...new Set(allActivities.map(a => a.type))]);
+                console.log(`ðŸ“… Date range of activities:`, {
                     oldest: allActivities[allActivities.length - 1]?.date,
                     newest: allActivities[0]?.date
                 });
@@ -761,14 +761,14 @@
                 // Show helpful message if no activities found
                 resultsDiv.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #5e6c84; background: white; border-radius: 8px; border: 1px solid #dfe1e6;">
-                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">🔍</div>
+                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">ðŸ”</div>
                         <h3>No Activities Found</h3>
                         <p>No activities were found for the selected date range (${startDate} to ${endDate}).</p>
                         <p style="font-size: 14px; color: #5e6c84; margin-top: 16px;">
                             Try:<br>
-                            • Expanding the date range<br>
-                            • Selecting "All Boards" instead of a specific board<br>
-                            • Checking if you were active on these boards during this period
+                            â€¢ Expanding the date range<br>
+                            â€¢ Selecting "All Boards" instead of a specific board<br>
+                            â€¢ Checking if you were active on these boards during this period
                         </p>
                         <div style="margin-top: 20px;">
                             <strong>Debug info:</strong><br>
@@ -787,7 +787,7 @@
         }
         
         function extractUsers(activities) {
-            console.log('👥 Extracting users from activities...');
+            console.log('ðŸ‘¥ Extracting users from activities...');
             
             allUsers.clear();
             
@@ -805,7 +805,7 @@
                 }
             });
             
-            console.log('👥 Found users:', Array.from(allUsers.values()).map(u => u.fullName));
+            console.log('ðŸ‘¥ Found users:', Array.from(allUsers.values()).map(u => u.fullName));
             
             // Populate user filter dropdown
             const userFilter = document.getElementById('userFilter');
@@ -837,7 +837,7 @@
                 const response = await fetch(`https://api.trello.com/1/members/me/boards?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&filter=open`);
                 if (response.ok) {
                     allBoards = await response.json();
-                    console.log(`✅ Loaded ${allBoards.length} boards`);
+                    console.log(`âœ… Loaded ${allBoards.length} boards`);
                     
                     // Populate board filter dropdown
                     const boardFilter = document.getElementById('boardFilter');
@@ -854,7 +854,7 @@
                     throw new Error(`Failed to load boards: ${response.status}`);
                 }
             } catch (error) {
-                console.error('❌ Error loading boards:', error);
+                console.error('âŒ Error loading boards:', error);
                 throw error;
             }
         }
@@ -974,14 +974,14 @@
                 selectedActivityTypes.has(activity.type)
             );
             
-            console.log(`🔍 After type filter: ${filteredActivities.length} activities`);
+            console.log(`ðŸ” After type filter: ${filteredActivities.length} activities`);
             
             // Apply user filter
             if (selectedUserId) {
                 filteredActivities = filteredActivities.filter(activity => 
                     activity.memberCreator && activity.memberCreator.id === selectedUserId
                 );
-                console.log(`👤 After user filter: ${filteredActivities.length} activities`);
+                console.log(`ðŸ‘¤ After user filter: ${filteredActivities.length} activities`);
             }
             
             // Apply automation filter
@@ -989,7 +989,7 @@
                 const beforeCount = filteredActivities.length;
                 
                 // Debug: Log first few activities to understand their structure
-                console.log('🔍 DEBUG: Showing 3 sample activities for automation detection:');
+                console.log('ðŸ” DEBUG: Showing 3 sample activities for automation detection:');
                 filteredActivities.slice(0, 3).forEach((activity, idx) => {
                     console.log(`Sample ${idx + 1}:`, {
                         type: activity.type,
@@ -1021,7 +1021,7 @@
                 return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
             });
             
-            console.log(`📊 Final filtered count: ${filteredActivities.length} activities (types: ${selectedActivityTypes.size}, user: ${selectedUserId || 'all'}, hideAuto: ${hideAutomation}, sort: ${sortDirection})`);
+            console.log(`ðŸ“Š Final filtered count: ${filteredActivities.length} activities (types: ${selectedActivityTypes.size}, user: ${selectedUserId || 'all'}, hideAuto: ${hideAutomation}, sort: ${sortDirection})`);
             displayStats(filteredActivities);
             displayActivitiesList(filteredActivities);
         }
@@ -1136,7 +1136,7 @@
             if (activities.length === 0) {
                 listContainer.innerHTML = `
                     <div style="text-align: center; padding: 40px 20px; color: #5e6c84; background: white; border-radius: 8px; border: 1px solid #dfe1e6;">
-                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">🔭</div>
+                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">ðŸ”­</div>
                         <h3>No activities found</h3>
                         <p>No activities match the selected filters for this date range.</p>
                     </div>
@@ -1174,10 +1174,10 @@
                 // Collapsible date header
                 activitiesHtml.push(`
                     <div style="padding: 12px 16px; margin: 24px 0 12px 0; background: linear-gradient(135deg, #0079bf, #005a8b); color: white; border-radius: 6px; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center;" onclick="toggleDateGroup('${dateId}')">
-                        <span>📅 ${dateStr}</span>
+                        <span>ðŸ“… ${dateStr}</span>
                         <span style="display: flex; align-items: center; gap: 12px;">
                             <span style="font-size: 12px; opacity: 0.9;">(${count} ${count === 1 ? 'activity' : 'activities'})</span>
-                            <span id="${dateId}-toggle" style="font-size: 18px;">▼</span>
+                            <span id="${dateId}-toggle" style="font-size: 18px;">â–¼</span>
                         </span>
                     </div>
                     <div id="${dateId}-content" style="display: block;">
@@ -1194,13 +1194,13 @@
                     });
                     const description = getActivityDescription(activity);
                     const user = activity.memberCreator;
-                    const userName = user ? `@${user.username || user.fullName}` : 'Unknown User';
+                    const userName = user ? `${user.fullName}` : 'Unknown User';
                     const userInitials = user ? (user.initials || user.fullName.substring(0, 2).toUpperCase()) : '?';
                     
                     // Check if automated
                     const isAutomated = isAutomationActivity(activity);
                     const automationBadge = isAutomated ? `
-                        <span style="display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; background: #c377e0; color: white; margin-left: 8px;">
+                        <span style="display: inline-flex; align-items: center; padding: 1px 5px; border-radius: 3px; font-size: 9px; font-weight: 600; background: #c377e0; color: white; margin-left: 4px;">
                             🤖 AUTO
                         </span>
                     ` : '';
@@ -1208,32 +1208,32 @@
                     // Extract card labels if available
                     const labels = getCardLabels(activity);
                     const labelsHtml = labels.length > 0 ? `
-                        <div style="display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap;">
+                        <div style="display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap;">
                             ${labels.map(label => `
-                                <span style="display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 500; background: ${label.color || '#dfe1e6'}; color: ${label.textColor || '#172b4d'};">
-                                    ${label.name || 'Unlabeled'}
+                                <span style="display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; background: ${label.color}; color: ${label.textColor};">
+                                    ${label.name || '●'}
                                 </span>
                             `).join('')}
                         </div>
                     ` : '';
                     
                     activitiesHtml.push(`
-                        <div style="display: flex; align-items: flex-start; padding: 16px; margin-bottom: 12px; background: white; border: 1px solid #dfe1e6; border-radius: 8px; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
-                            <div style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 14px; font-weight: bold; color: white; flex-shrink: 0;" class="${type.class}">
+                        <div style="display: flex; align-items: flex-start; padding: 12px 14px; margin-bottom: 8px; background: white; border-left: 3px solid ${type.class === 'type-card' ? '#61bd4f' : type.class === 'type-comment' ? '#f2d600' : type.class === 'type-attachment' ? '#ff9f1a' : '#838c91'}; border-top: 1px solid #dfe1e6; border-right: 1px solid #dfe1e6; border-bottom: 1px solid #dfe1e6; border-radius: 4px; transition: all 0.15s;" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'; this.style.borderLeftWidth='4px'" onmouseout="this.style.boxShadow='none'; this.style.borderLeftWidth='3px'">
+                            <div style="width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 13px; font-weight: bold; color: white; flex-shrink: 0;" class="${type.class}">
                                 ${type.icon}
                             </div>
-                            <div style="flex-grow: 1;">
-                                <p style="font-size: 14px; line-height: 1.4; margin: 0 0 4px 0;">
-                                    <strong style="color: #0079bf;">${userName}</strong>${automationBadge} ${description}
-                                </p>
-                                <div style="font-size: 12px; color: #5e6c84; display: flex; gap: 16px; flex-wrap: wrap;">
-                                    <span style="font-weight: 500;">${activity.boardName}</span>
+                            <div style="flex-grow: 1; min-width: 0;">
+                                <div style="font-size: 13px; line-height: 1.3; margin-bottom: 3px;">
+                                    <strong style="color: #172b4d; font-weight: 600;">${userName}</strong>${automationBadge}
+                                    <span style="color: #5e6c84;"> ${description}</span>
+                                </div>
+                                <div style="font-size: 11px; color: #8c9bac; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                    <span style="font-weight: 500; color: #5e6c84;">📋 ${activity.boardName}</span>
                                     <span>🕐 ${timeStr}</span>
-                                    <span>${type.name}</span>
                                 </div>
                                 ${labelsHtml}
                             </div>
-                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #dfe1e6; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #5e6c84; flex-shrink: 0; margin-left: 8px;">
+                            <div style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #e4e6eb, #d2d5dc); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #5e6c84; flex-shrink: 0; margin-left: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
                                 ${userInitials}
                             </div>
                         </div>
@@ -1252,10 +1252,10 @@
             
             if (content.style.display === 'none') {
                 content.style.display = 'block';
-                toggle.textContent = '▼';
+                toggle.textContent = 'â–¼';
             } else {
                 content.style.display = 'none';
-                toggle.textContent = '▶';
+                toggle.textContent = 'â–¶';
             }
         }
 
@@ -1267,8 +1267,8 @@
             // Try to get labels from card data
             if (activity.data && activity.data.card && activity.data.card.labels) {
                 return activity.data.card.labels.map(label => ({
-                    name: label.name || 'Unlabeled',
-                    color: label.color || '#dfe1e6',
+                    name: label.name || '',
+                    color: getTrelloLabelColor(label.color),
                     textColor: getTextColorForBackground(label.color)
                 }));
             }
@@ -1276,8 +1276,8 @@
             // Try to get label from addLabelToCard action
             if (activity.type === 'addLabelToCard' && activity.data && activity.data.label) {
                 labels.push({
-                    name: activity.data.label.name || 'Unlabeled',
-                    color: activity.data.label.color || '#dfe1e6',
+                    name: activity.data.label.name || '',
+                    color: getTrelloLabelColor(activity.data.label.color),
                     textColor: getTextColorForBackground(activity.data.label.color)
                 });
             }
@@ -1285,9 +1285,39 @@
             return labels;
         }
         
+        function getTrelloLabelColor(colorName) {
+            // Map Trello color names to their actual hex values
+            const colorMap = {
+                'green': '#61bd4f',
+                'yellow': '#f2d600',
+                'orange': '#ff9f1a',
+                'red': '#eb5a46',
+                'purple': '#c377e0',
+                'blue': '#0079bf',
+                'sky': '#00c2e0',
+                'lime': '#51e898',
+                'pink': '#ff78cb',
+                'black': '#344563',
+                'green_dark': '#519839',
+                'yellow_dark': '#d9b51c',
+                'orange_dark': '#cd8313',
+                'red_dark': '#b04632',
+                'purple_dark': '#89609e',
+                'blue_dark': '#055a8c',
+                'sky_dark': '#0098b7',
+                'lime_dark': '#4bbf6b',
+                'pink_dark': '#c9558f',
+                'black_dark': '#091e42'
+            };
+            
+            return colorMap[colorName] || '#dfe1e6';
+        }
+        
         function getTextColorForBackground(backgroundColor) {
             // Map Trello label colors to appropriate text colors
-            const darkBgColors = ['green', 'blue', 'purple', 'red', 'black', 'sky', 'pink', 'lime'];
+            const darkBgColors = ['green', 'blue', 'purple', 'red', 'black', 'sky', 'pink', 'lime', 
+                                  'green_dark', 'yellow_dark', 'orange_dark', 'red_dark', 'purple_dark', 
+                                  'blue_dark', 'sky_dark', 'lime_dark', 'pink_dark', 'black_dark'];
             if (!backgroundColor) return '#172b4d';
             
             const color = backgroundColor.toLowerCase();
@@ -1307,7 +1337,7 @@
                 case 'createCard':
                     return `created card "${activity.data.card.name}"`;
                 case 'updateCard':
-                    return `updated card "${activity.data.card.name}"`;
+                    return parseUpdateCardActivity(activity);
                 case 'commentCard':
                     const comment = activity.data.text || '';
                     return `commented on "${activity.data.card.name}": "${comment.substring(0, 100)}${comment.length > 100 ? '...' : ''}"`;
@@ -1330,8 +1360,80 @@
             }
         }
         
+        function parseUpdateCardActivity(activity) {
+            const cardName = activity.data.card.name;
+            const changes = [];
+            
+            if (activity.data.old) {
+                const old = activity.data.old;
+                const card = activity.data.card;
+                
+                // Check for name change
+                if (old.name && old.name !== card.name) {
+                    changes.push(`renamed from "${old.name}" to "${card.name}"`);
+                }
+                
+                // Check for description change
+                if ('desc' in old) {
+                    if (old.desc === '' && card.desc) {
+                        changes.push('added description');
+                    } else if (old.desc && card.desc === '') {
+                        changes.push('removed description');
+                    } else {
+                        changes.push('updated description');
+                    }
+                }
+                
+                // Check for due date changes
+                if ('due' in old) {
+                    if (old.due === null && card.due) {
+                        const dueDate = new Date(card.due).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        changes.push(`set due date to ${dueDate}`);
+                    } else if (old.due && card.due === null) {
+                        changes.push('removed due date');
+                    } else if (old.due && card.due) {
+                        const oldDate = new Date(old.due).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        const newDate = new Date(card.due).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        changes.push(`changed due date from ${oldDate} to ${newDate}`);
+                    }
+                }
+                
+                // Check for due complete toggle
+                if ('dueComplete' in old) {
+                    changes.push(card.dueComplete ? 'marked due date complete' : 'marked due date incomplete');
+                }
+                
+                // Check for closed/archived status
+                if ('closed' in old) {
+                    changes.push(card.closed ? 'archived card' : 'unarchived card');
+                }
+                
+                // Check for position change (moved within same list)
+                if ('pos' in old && !('idList' in old)) {
+                    changes.push('reordered card');
+                }
+                
+                // Check for cover change
+                if ('idAttachmentCover' in old) {
+                    if (card.idAttachmentCover) {
+                        changes.push('changed cover image');
+                    } else {
+                        changes.push('removed cover image');
+                    }
+                }
+            }
+            
+            // If we found specific changes, return them
+            if (changes.length > 0) {
+                return `${changes.join(', ')} on "${cardName}"`;
+            }
+            
+            // Fallback to generic update
+            return `updated card "${cardName}"`;
+        }
+        
         function exportToCSV() {
-            console.log('📊 Starting CSV export...');
+            console.log('ðŸ“Š Starting CSV export...');
             
             // Get current filtered activities
             let filteredActivities = currentActivities.filter(activity => 
@@ -1349,7 +1451,7 @@
                 return;
             }
             
-            console.log(`📊 Exporting ${filteredActivities.length} activities to CSV`);
+            console.log(`ðŸ“Š Exporting ${filteredActivities.length} activities to CSV`);
             
             // Create CSV headers
             const headers = [
@@ -1416,13 +1518,13 @@
             link.click();
             document.body.removeChild(link);
             
-            console.log(`✅ CSV exported: ${filename}`);
+            console.log(`âœ… CSV exported: ${filename}`);
             
             // Show success message
             const exportBtn = document.getElementById('exportCSV');
             if (exportBtn) {
                 const originalText = exportBtn.textContent;
-                exportBtn.textContent = `✅ Exported ${filteredActivities.length} activities`;
+                exportBtn.textContent = `âœ… Exported ${filteredActivities.length} activities`;
                 exportBtn.style.background = '#61bd4f';
                 
                 setTimeout(() => {
@@ -1444,24 +1546,24 @@
         }
         
         function initializePowerUp() {
-            console.log('🚀 Starting Power-Up initialization...');
+            console.log('ðŸš€ Starting Power-Up initialization...');
             
             // Wait for TrelloPowerUp to be available
             if (typeof window.TrelloPowerUp !== 'undefined') {
-                console.log('✅ TrelloPowerUp available, initializing immediately');
+                console.log('âœ… TrelloPowerUp available, initializing immediately');
                 setupPowerUpCapabilities();
             } else {
-                console.log('⏳ TrelloPowerUp not ready, waiting...');
+                console.log('â³ TrelloPowerUp not ready, waiting...');
                 let attempts = 0;
                 const maxAttempts = 50;
                 const checkInterval = setInterval(() => {
                     attempts++;
                     if (typeof window.TrelloPowerUp !== 'undefined') {
-                        console.log('✅ TrelloPowerUp ready after', attempts, 'attempts');
+                        console.log('âœ… TrelloPowerUp ready after', attempts, 'attempts');
                         clearInterval(checkInterval);
                         setupPowerUpCapabilities();
                     } else if (attempts >= maxAttempts) {
-                        console.error('❌ TrelloPowerUp failed to load after', maxAttempts, 'attempts');
+                        console.error('âŒ TrelloPowerUp failed to load after', maxAttempts, 'attempts');
                         clearInterval(checkInterval);
                     }
                 }, 100);
@@ -1470,11 +1572,11 @@
         
         function setupPowerUpCapabilities() {
             try {
-                console.log('🔧 Initializing Power-Up capabilities...');
+                console.log('ðŸ”§ Initializing Power-Up capabilities...');
                 
                 window.TrelloPowerUp.initialize({
                     'board-buttons': function(t, opts) {
-                        console.log('🎯 Board buttons capability called');
+                        console.log('ðŸŽ¯ Board buttons capability called');
                         return [{
                             icon: {
                                 dark: 'https://brett-pnc.github.io/Trello-Activity-Tracker/activity_tracker_icon_dark_theme.svg',
@@ -1482,8 +1584,8 @@
                             },
                             text: 'Activity Tracker',
                             callback: function(t) {
-                                console.log('🚀 Board button clicked');
-                                console.log('🚀 Opening modal...');
+                                console.log('ðŸš€ Board button clicked');
+                                console.log('ðŸš€ Opening modal...');
                                 return t.modal({
                                     url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?mode=overlay',
                                     args: { source: 'board-button' },
@@ -1492,16 +1594,16 @@
                                     fullscreen: false,
                                     title: 'Activity Tracker'
                                 }).then(function() {
-                                    console.log('✅ Modal opened successfully');
+                                    console.log('âœ… Modal opened successfully');
                                 }).catch(function(error) {
-                                    console.error('❌ Modal failed to open:', error);
+                                    console.error('âŒ Modal failed to open:', error);
                                 });
                             }
                         }];
                     },
                     
                     'card-buttons': function(t, opts) {
-                        console.log('🎯 Card buttons capability called');
+                        console.log('ðŸŽ¯ Card buttons capability called');
                         return [{
                             icon: {
                                 dark: 'https://brett-pnc.github.io/Trello-Activity-Tracker/activity_tracker_icon_dark_theme.svg',
@@ -1509,7 +1611,7 @@
                             },
                             text: 'Activity Tracker',
                             callback: function(t) {
-                                console.log('🚀 Card button clicked');
+                                console.log('ðŸš€ Card button clicked');
                                 return t.modal({
                                     url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?mode=overlay',
                                     args: { source: 'card-button' },
@@ -1523,7 +1625,7 @@
                     },
                     
                     'show-settings': function(t, options) {
-                        console.log('🎯 Show settings called');
+                        console.log('ðŸŽ¯ Show settings called');
                         return t.popup({
                             title: 'Activity Tracker Settings',
                             url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?settings=true',
@@ -1532,20 +1634,20 @@
                     },
                     
                     'authorization-status': function(t, options) {
-                        console.log('🎯 Authorization status check called');
+                        console.log('ðŸŽ¯ Authorization status check called');
                         return t.getRestApi().getToken()
                             .then(function(token) {
-                                console.log('✅ User is authorized');
+                                console.log('âœ… User is authorized');
                                 return { authorized: true };
                             })
                             .catch(function(error) {
-                                console.log('❌ User not authorized');
+                                console.log('âŒ User not authorized');
                                 return { authorized: false };
                             });
                     },
                     
                     'show-authorization': function(t, options) {
-                        console.log('🎯 Show authorization called');
+                        console.log('ðŸŽ¯ Show authorization called');
                         return t.popup({
                             title: 'Authorize Activity Tracker',
                             url: 'https://brett-pnc.github.io/Trello-Activity-Tracker/index.html?mode=authorize',
@@ -1555,18 +1657,18 @@
                     },
                     
                     'on-enable': function(t, options) {
-                        console.log('🎯 On-enable called');
+                        console.log('ðŸŽ¯ On-enable called');
                         return t.alert({
-                            message: '🎉 Activity Tracker enabled! Look for the "Activity Tracker" button in your board menu.',
+                            message: 'ðŸŽ‰ Activity Tracker enabled! Look for the "Activity Tracker" button in your board menu.',
                             duration: 5
                         });
                     }
                 });
                 
-                console.log('✅ Power-Up initialized successfully!');
+                console.log('âœ… Power-Up initialized successfully!');
                 
             } catch (error) {
-                console.error('❌ Power-Up initialization error:', error);
+                console.error('âŒ Power-Up initialization error:', error);
             }
         }
     </script>

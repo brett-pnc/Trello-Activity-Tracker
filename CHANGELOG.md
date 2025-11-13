@@ -1,5 +1,42 @@
 # Activity Tracker Changelog
 
+## v1.0.3 - November 12, 2024
+
+### Added
+- **Parse "Card Updated" activities**: Now shows specific changes instead of generic "updated card"
+  - Detects name changes, description edits, due date changes, completion status
+  - Shows archived/unarchived, reordered, cover image changes
+  - Example: "changed due date from Nov 10 to Nov 12" instead of "updated card"
+- **Enhanced label display**: Proper Trello color mapping with hex values
+  - Supports all Trello label colors (green, yellow, orange, red, purple, blue, sky, lime, pink, black)
+  - Includes dark variants for accurate color representation
+  - Empty labels show as colored dots
+
+### Improved
+- **Compact layout**: Activity items now more space-efficient
+  - Reduced padding (16px → 12px)
+  - Smaller spacing between items (12px → 8px)
+  - Colored left border indicates activity type (card=green, comment=yellow, etc.)
+  - Border expands on hover for better visual feedback
+- **Better visual hierarchy**:
+  - User names in darker text (full name only, no @ prefix)
+  - Description in lighter gray for better readability
+  - Smaller, cleaner badges and metadata
+  - Improved user avatar styling with gradient background
+- **Refined typography**:
+  - Activity text: 13px (was 14px)
+  - Metadata: 11px (was 12px)
+  - Tighter line height (1.3) for compact feel
+  - Labels now 10px with bolder text
+
+### Technical
+- Added `parseUpdateCardActivity()` function to detect specific card changes
+- Added `getTrelloLabelColor()` for accurate Trello color mapping
+- Activity type color indicators via left border styling
+- Enhanced hover states with smooth transitions
+
+---
+
 ## v1.0.2 - November 12, 2024
 
 ### Fixed
@@ -28,8 +65,8 @@
 ## v1.0.1 - November 12, 2024
 
 ### Fixed
-- **Arrow icons** now display correctly (▶ ▼ instead of â–¶ â–¼)
-- **Search icon** in loading state now shows correct refresh icon (🔄 instead of 🔍•)
+- **Arrow icons** now display correctly (â–¶ â–¼ instead of Ã¢â€“Â¶ Ã¢â€“Â¼)
+- **Search icon** in loading state now shows correct refresh icon (ðŸ”„ instead of ðŸ”â€¢)
 - All emoji and Unicode symbols validated and corrected
 
 ### Changed
