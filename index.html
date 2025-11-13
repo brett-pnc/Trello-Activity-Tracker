@@ -81,6 +81,252 @@
         .type-member { background: #0079bf; }
         .type-label { background: #eb5a46; }
         .type-other { background: #838c91; }
+        
+        /* Date Group Headers */
+        .date-header {
+            padding: 12px 16px;
+            margin: 24px 0 12px 0;
+            background: linear-gradient(135deg, #0079bf, #005a8b);
+            color: white;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .date-header-count {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .date-header-count span:first-child {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .date-header-count span:last-child {
+            font-size: 18px;
+        }
+        
+        .date-content {
+            display: block;
+        }
+        
+        /* Activity Items */
+        .activity-item {
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            background: white;
+            border-top: 1px solid #dfe1e6;
+            border-right: 1px solid #dfe1e6;
+            border-bottom: 1px solid #dfe1e6;
+            border-radius: 4px;
+            transition: all 0.15s;
+        }
+        
+        .activity-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .activity-item.type-card-border {
+            border-left: 3px solid #61bd4f;
+        }
+        
+        .activity-item.type-comment-border {
+            border-left: 3px solid #f2d600;
+        }
+        
+        .activity-item.type-attachment-border {
+            border-left: 3px solid #ff9f1a;
+        }
+        
+        .activity-item.type-other-border {
+            border-left: 3px solid #838c91;
+        }
+        
+        .activity-item:hover.type-card-border {
+            border-left-width: 4px;
+        }
+        
+        .activity-item:hover.type-comment-border {
+            border-left-width: 4px;
+        }
+        
+        .activity-item:hover.type-attachment-border {
+            border-left-width: 4px;
+        }
+        
+        .activity-item:hover.type-other-border {
+            border-left-width: 4px;
+        }
+        
+        /* Activity Header */
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #172b4d;
+        }
+        
+        .activity-header-content {
+            flex: 1;
+            line-height: 1.4;
+        }
+        
+        .activity-header-content strong {
+            font-weight: 700;
+        }
+        
+        .activity-header-content .on-text {
+            font-weight: 400;
+        }
+        
+        /* Time Badge */
+        .time-badge {
+            background: #5e6c84;
+            color: white;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 0 0 0 6px;
+            margin-left: 12px;
+            white-space: nowrap;
+        }
+        
+        /* Activity Content */
+        .activity-content {
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .activity-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 13px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .activity-main {
+            flex-grow: 1;
+            min-width: 0;
+        }
+        
+        /* Activity Action Text */
+        .activity-action {
+            font-size: 13px;
+            line-height: 1.3;
+            color: #172b4d;
+        }
+        
+        .activity-action strong {
+            font-weight: 600;
+        }
+        
+        .activity-action .description {
+            color: #5e6c84;
+        }
+        
+        /* Comment Styles */
+        .comment-header {
+            font-size: 13px;
+            color: #172b4d;
+            margin-bottom: 6px;
+        }
+        
+        .comment-header strong {
+            font-weight: 600;
+        }
+        
+        .comment-blockquote {
+            border-left: 4px solid #dfe1e6;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            line-height: 1.4;
+            color: #172b4d;
+        }
+        
+        .comment-toggle {
+            color: #0079bf;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+        
+        .comment-toggle:hover {
+            text-decoration: underline;
+        }
+        
+        /* Labels */
+        .label-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+        
+        .label-overflow {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            background: #dfe1e6;
+            color: #172b4d;
+            margin-left: 4px;
+            cursor: help;
+        }
+        
+        /* Automation Badge */
+        .automation-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 600;
+            background: #c377e0;
+            color: white;
+            margin-left: 4px;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #5e6c84;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dfe1e6;
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
@@ -250,7 +496,7 @@
                     <!-- Header with buttons -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #dfe1e6; padding-bottom: 15px;">
                         <div>
-                            <h2 style="margin: 0; color: #172b4d;">📊 Activity Tracker <span style="font-size: 12px; color: #a5adba; font-weight: 400;">v1.0.4</span></h2>
+                            <h2 style="margin: 0; color: #172b4d;">📊 Activity Tracker <span style="font-size: 12px; color: #a5adba; font-weight: 400;">v1.0.5</span></h2>
                         </div>
                         <div style="display: flex; gap: 8px;">
                             <button id="exportCSV" style="padding: 10px 20px; background: #61bd4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;" disabled>Export CSV</button>
@@ -1135,8 +1381,8 @@
             
             if (activities.length === 0) {
                 listContainer.innerHTML = `
-                    <div style="text-align: center; padding: 40px 20px; color: #5e6c84; background: white; border-radius: 8px; border: 1px solid #dfe1e6;">
-                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">💭</div>
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💭</div>
                         <h3>No activities found</h3>
                         <p>No activities match the selected filters for this date range.</p>
                     </div>
@@ -1173,14 +1419,14 @@
                 
                 // Collapsible date header
                 activitiesHtml.push(`
-                    <div style="padding: 12px 16px; margin: 24px 0 12px 0; background: linear-gradient(135deg, #0079bf, #005a8b); color: white; border-radius: 6px; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center;" onclick="toggleDateGroup('${dateId}')">
+                    <div class="date-header" onclick="toggleDateGroup('${dateId}')">
                         <span>📦 ${dateStr}</span>
-                        <span style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 12px; opacity: 0.9;">(${count} ${count === 1 ? 'activity' : 'activities'})</span>
-                            <span id="${dateId}-toggle" style="font-size: 18px;">▼</span>
+                        <span class="date-header-count">
+                            <span>(${count} ${count === 1 ? 'activity' : 'activities'})</span>
+                            <span id="${dateId}-toggle">▼</span>
                         </span>
                     </div>
-                    <div id="${dateId}-content" style="display: block;">
+                    <div id="${dateId}-content" class="date-content">
                 `);
                 
                 // Activities for this date
@@ -1198,7 +1444,7 @@
                     // Check if automated
                     const isAutomated = isAutomationActivity(activity);
                     const automationBadge = isAutomated ? `
-                        <span style="display: inline-flex; align-items: center; padding: 1px 5px; border-radius: 3px; font-size: 9px; font-weight: 600; background: #c377e0; color: white; margin-left: 4px;">
+                        <span class="automation-badge">
                             🤖 AUTO
                         </span>
                     ` : '';
@@ -1214,7 +1460,7 @@
                         const remainingCount = labels.length - 2;
                         
                         labelsHtml = visibleLabels.map(label => `
-                            <span style="display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; background: ${label.color}; color: ${label.textColor}; margin-left: 4px;">
+                            <span class="label-badge" style="background: ${label.color}; color: ${label.textColor};">
                                 ${label.name || '●'}
                             </span>
                         `).join('');
@@ -1222,7 +1468,7 @@
                         if (remainingCount > 0) {
                             const remainingLabels = labels.slice(2).map(l => l.name || '●').join(', ');
                             labelsHtml += `
-                                <span style="display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; background: #dfe1e6; color: #172b4d; margin-left: 4px; cursor: help;" title="${remainingLabels}">
+                                <span class="label-overflow" title="${remainingLabels}">
                                     +${remainingCount}
                                 </span>
                             `;
@@ -1232,7 +1478,7 @@
                     // Build header line: Card Name [labels] on Board Name
                     let headerLine = '';
                     if (cardName) {
-                        headerLine = `<strong>${cardName}</strong>${labelsHtml} <span style="font-weight: 400;">on</span> <strong>${activity.boardName}</strong>`;
+                        headerLine = `<strong>${cardName}</strong>${labelsHtml} <span class="on-text">on</span> <strong>${activity.boardName}</strong>`;
                     } else {
                         headerLine = `<strong>${activity.boardName}</strong>`;
                     }
@@ -1251,54 +1497,62 @@
                         const commentId = `comment-${dateId}-${activityIdx}`;
                         
                         actionContent = `
-                            <div style="font-size: 13px; color: #172b4d; margin-bottom: 6px;">
-                                <strong style="font-weight: 600;">${userName}</strong>${automationBadge} commented:
+                            <div class="comment-header">
+                                <strong>${userName}</strong>${automationBadge} commented:
                             </div>
-                            <div style="border-left: 4px solid #dfe1e6; background: #f8f9fa; padding: 8px 12px; border-radius: 4px; font-size: 13px; line-height: 1.4; color: #172b4d;">
+                            <div class="comment-blockquote">
                                 <div id="${commentId}-preview" style="display: block;">
                                     ${firstLine}
-                                    ${hasMore ? `<a href="#" onclick="toggleComment('${commentId}'); return false;" style="color: #0079bf; text-decoration: none; font-weight: 500; margin-left: 8px;">[Show more]</a>` : ''}
+                                    ${hasMore ? `<a href="#" onclick="toggleComment('${commentId}'); return false;" class="comment-toggle">[Show more]</a>` : ''}
                                 </div>
                                 ${hasMore ? `
                                 <div id="${commentId}-full" style="display: none;">
                                     ${commentText.replace(/\n/g, '<br>')}
-                                    <a href="#" onclick="toggleComment('${commentId}'); return false;" style="color: #0079bf; text-decoration: none; font-weight: 500; margin-left: 8px;">[Show less]</a>
+                                    <a href="#" onclick="toggleComment('${commentId}'); return false;" class="comment-toggle">[Show less]</a>
                                 </div>
                                 ` : ''}
                             </div>
                         `;
                     } else {
                         actionContent = `
-                            <div style="font-size: 13px; line-height: 1.3; color: #172b4d;">
-                                <strong style="font-weight: 600;">${userName}</strong>${automationBadge}
-                                <span style="color: #5e6c84;"> ${description}</span>
+                            <div class="activity-action">
+                                <strong>${userName}</strong>${automationBadge}
+                                <span class="description"> ${description}</span>
                             </div>
                         `;
                     }
                     
+                    // Determine border class based on activity type
+                    let borderClass = 'type-other-border';
+                    if (type.class === 'type-card') borderClass = 'type-card-border';
+                    else if (type.class === 'type-comment') borderClass = 'type-comment-border';
+                    else if (type.class === 'type-attachment') borderClass = 'type-attachment-border';
+                    
                     activitiesHtml.push(`
-                        <div style="padding: 12px 14px; margin-bottom: 8px; background: white; border-left: 3px solid ${type.class === 'type-card' ? '#61bd4f' : type.class === 'type-comment' ? '#f2d600' : type.class === 'type-attachment' ? '#ff9f1a' : '#838c91'}; border-top: 1px solid #dfe1e6; border-right: 1px solid #dfe1e6; border-bottom: 1px solid #dfe1e6; border-radius: 4px; transition: all 0.15s;" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'; this.style.borderLeftWidth='4px'" onmouseout="this.style.boxShadow='none'; this.style.borderLeftWidth='3px'">
+                        <div class="activity-item ${borderClass}">
                             <!-- Header line with card/board and time -->
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; font-size: 13px; color: #172b4d;">
-                                <div style="flex: 1; line-height: 1.4;">
+                            <div class="activity-header">
+                                <div class="activity-header-content">
                                     ${headerLine}
                                 </div>
-                                <div style="background: #5e6c84; color: white; padding: 4px 8px; font-size: 11px; font-weight: 700; border-radius: 0 0 0 6px; margin-left: 12px; white-space: nowrap;">
+                                <div class="time-badge">
                                     ${timeStr}
                                 </div>
                             </div>
                             
                             <!-- Activity content -->
-                            <div style="display: flex; align-items: flex-start;">
-                                <div style="width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 13px; font-weight: bold; color: white; flex-shrink: 0;" class="${type.class}">
+                            <div class="activity-content">
+                                <div class="activity-icon ${type.class}">
                                     ${type.icon}
                                 </div>
-                                <div style="flex-grow: 1; min-width: 0;">
+                                <div class="activity-main">
                                     ${actionContent}
                                 </div>
                             </div>
                         </div>
                     `);
+                });
+                });
                 });
                 
                 activitiesHtml.push('</div>');

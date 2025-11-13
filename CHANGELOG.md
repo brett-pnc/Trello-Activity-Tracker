@@ -1,5 +1,22 @@
 # Activity Tracker Changelog
 
+## v1.0.5 - November 13, 2024
+
+### Changed
+- **Refactored styling architecture**: Moved inline styles to CSS classes
+  - Created semantic class structure for better maintainability
+  - Reduced inline styles from 147 to ~25 (only dynamic/data-driven styles remain)
+  - Activity display now uses class-based styling system
+  - Kept inline styles only for: dynamic colors (labels), display states (comment toggle), and form UI elements
+
+### Technical
+- Added CSS classes: `.date-header`, `.activity-item`, `.activity-header`, `.time-badge`, `.activity-content`, `.activity-icon`, `.activity-main`, `.activity-action`, `.comment-header`, `.comment-blockquote`, `.comment-toggle`, `.label-badge`, `.label-overflow`, `.automation-badge`, `.empty-state`
+- Border color classes: `.type-card-border`, `.type-comment-border`, `.type-attachment-border`, `.type-other-border`
+- Improved code maintainability and readability
+- Reduced file complexity while maintaining all functionality
+
+---
+
 ## v1.0.4 - November 12, 2024
 
 ### Changed
