@@ -1,5 +1,32 @@
 # Activity Tracker Changelog
 
+## v1.0.4 - November 12, 2024
+
+### Changed
+- **Redesigned activity layout** for better information hierarchy:
+  - Top line shows: **Card Name** [labels] on **Board Name** with time badge in top-right
+  - Time badge: dark background (#5e6c84), white bold text, bottom-left corner rounded (flag effect)
+  - Removed user initials avatar from right side
+  - Activity icon and username now left-aligned in second row
+- **Enhanced label display**:
+  - Shows maximum 2 labels inline after card name
+  - Additional labels indicated with "+N" badge showing count
+  - Tooltip on "+N" badge shows remaining label names
+- **Improved comment display**:
+  - Comments shown as blockquote with gray left border and light background
+  - First line visible by default with "[Show more]" link
+  - Expandable to show full comment text with "[Show less]" link
+  - No truncation of comment text
+- **Performance improvement**: TrelloPowerUp retry attempts reduced from 50 to 10
+
+### Technical
+- Added `toggleComment()` function for expanding/collapsing comment text
+- Restructured activity item HTML with header/content separation
+- Time badge uses `border-radius: 0 0 0 6px` for flag corner effect
+- Labels limited to 2 visible with overflow counter
+
+---
+
 ## v1.0.3 - November 12, 2024
 
 ### Added
