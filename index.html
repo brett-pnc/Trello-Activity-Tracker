@@ -250,7 +250,7 @@
                     <!-- Header with buttons -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #dfe1e6; padding-bottom: 15px;">
                         <div>
-                            <h2 style="margin: 0; color: #172b4d;">📊 Activity Tracker <span style="font-size: 12px; color: #a5adba; font-weight: 400;">v1.0.1</span></h2>
+                            <h2 style="margin: 0; color: #172b4d;">📊 Activity Tracker <span style="font-size: 12px; color: #a5adba; font-weight: 400;">v1.0.2</span></h2>
                         </div>
                         <div style="display: flex; gap: 8px;">
                             <button id="exportCSV" style="padding: 10px 20px; background: #61bd4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;" disabled>Export CSV</button>
@@ -674,21 +674,14 @@
                     
                     console.log(`📅 API date range: ${startDateTime} to ${endDateTime}`);
                     
-                    // Try different API approaches
-                    const urls = [
-                        // Approach 1: Board actions with member filter
-                        `https://api.trello.com/1/boards/${board.id}/actions?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&since=${startDateTime}&before=${endDateTime}&limit=1000&member=me`,
-                        
-                        // Approach 2: Board actions without member filter (if no results from first)
-                        `https://api.trello.com/1/boards/${board.id}/actions?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&since=${startDateTime}&before=${endDateTime}&limit=1000`
-                    ];
+                    // Fetch all board actions (member=me parameter causes 400 error)
+                    const url = `https://api.trello.com/1/boards/${board.id}/actions?key=caeeec29db6d299bd3b65e9743854d5d&token=${token}&since=${startDateTime}&before=${endDateTime}&limit=1000`;
+                    
+                    console.log(`🔄 Fetching activities:`, url);
                     
                     let boardActivities = [];
                     
-                    for (let i = 0; i < urls.length; i++) {
-                        const url = urls[i];
-                        console.log(`🔄 Trying URL ${i + 1}:`, url);
-                        
+                    try {
                         const response = await fetch(url);
                         console.log(`📡 Response status:`, response.status);
                         
@@ -697,15 +690,16 @@
                             console.log(`📊 Raw response length:`, boardActivities.length);
                             
                             if (boardActivities.length > 0) {
-                                console.log(`✅ Found ${boardActivities.length} activities with approach ${i + 1}`);
-                                break; // Success, stop trying other approaches
+                                console.log(`✅ Found ${boardActivities.length} activities`);
                             } else {
-                                console.log(`⚠️ No activities found with approach ${i + 1}, trying next...`);
+                                console.log(`⚠️ No activities found in date range`);
                             }
                         } else {
                             const errorText = await response.text();
-                            console.warn(`❌ API error with approach ${i + 1}:`, response.status, errorText);
+                            console.warn(`❌ API error:`, response.status, errorText);
                         }
+                    } catch (fetchError) {
+                        console.error(`❌ Fetch error:`, fetchError);
                     }
                     
                     if (boardActivities.length > 0) {
@@ -993,6 +987,26 @@
             // Apply automation filter
             if (hideAutomation) {
                 const beforeCount = filteredActivities.length;
+                
+                // Debug: Log first few activities to understand their structure
+                console.log('🔍 DEBUG: Showing 3 sample activities for automation detection:');
+                filteredActivities.slice(0, 3).forEach((activity, idx) => {
+                    console.log(`Sample ${idx + 1}:`, {
+                        type: activity.type,
+                        date: activity.date,
+                        memberCreator: activity.memberCreator ? {
+                            username: activity.memberCreator.username,
+                            fullName: activity.memberCreator.fullName,
+                            id: activity.memberCreator.id
+                        } : null,
+                        idMemberCreator: activity.idMemberCreator,
+                        hasDisplay: !!activity.display,
+                        displayKeys: activity.display ? Object.keys(activity.display) : [],
+                        dataKeys: activity.data ? Object.keys(activity.data) : [],
+                        oldKeys: activity.data?.old ? Object.keys(activity.data.old) : []
+                    });
+                });
+                
                 filteredActivities = filteredActivities.filter(activity => 
                     !isAutomationActivity(activity)
                 );
@@ -1027,21 +1041,57 @@
             if (username.includes('bot') || fullName.includes('bot')) return true;
             
             // Method 3: Check for known automation user IDs
-            // Butler's real user ID
             const knownAutomationIds = [
-                '5c8d890e6b4e5a7b1d2e3f4a', // Example Butler ID
-                '5c8d890e6b4e5a7b1d2e3f4b', // Example automation ID
-                '51901b6f5770caa0670002e3'  // Known Butler ID
+                '5c8d890e6b4e5a7b1d2e3f4a',
+                '5c8d890e6b4e5a7b1d2e3f4b',
+                '51901b6f5770caa0670002e3'
             ];
             if (userId && knownAutomationIds.includes(userId)) return true;
             
-            // Method 4: Check for idMemberCreator being null in the activity data itself
+            // Method 4: Check for idMemberCreator being null
             if (!activity.idMemberCreator) return true;
             
             // Method 5: Check activity text for automation patterns
             if (activity.type === 'commentCard' && activity.data && activity.data.text) {
                 const commentText = activity.data.text.toLowerCase();
                 if (commentText.includes('automated') || commentText.includes('butler')) return true;
+            }
+            
+            // Method 6: Check for Butler-specific display properties
+            if (activity.display) {
+                const displayText = JSON.stringify(activity.display).toLowerCase();
+                if (displayText.includes('butler') || displayText.includes('automation')) return true;
+            }
+            
+            // Method 7: Check for specific Butler patterns in updateCard actions
+            if (activity.type === 'updateCard' && activity.data) {
+                // Butler often updates cards with very specific patterns
+                // Check if it's a batch update (multiple fields at once in a specific way)
+                const data = activity.data;
+                
+                // Butler updates often have 'old' property with previous values
+                if (data.old) {
+                    // Check for common Butler automation patterns:
+                    // - Due date changes without user context
+                    // - Label changes in bulk
+                    // - Card moves with specific patterns
+                    const hasOldDue = 'due' in data.old;
+                    const hasOldDueComplete = 'dueComplete' in data.old;
+                    const hasOldIdList = 'idList' in data.old;
+                    
+                    // If multiple automated-looking fields changed at once, likely Butler
+                    const automatedFieldCount = [hasOldDue, hasOldDueComplete, hasOldIdList].filter(Boolean).length;
+                    if (automatedFieldCount >= 2) return true;
+                }
+                
+                // Check for card field updates that happen without typical user interaction
+                if (data.card) {
+                    // Butler often updates specific fields like subscribed, dueComplete, etc.
+                    if ('subscribed' in data.old || 'dueComplete' in data.old) {
+                        // These are often automated unless there's strong user context
+                        return true;
+                    }
+                }
             }
             
             return false;
